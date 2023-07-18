@@ -14,7 +14,7 @@ import numpy as np
 
 
 #%%veri oku
-veri=pd.read_csv('veri.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+veri=pd.read_csv('C:/ptfdegisim/veri.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
 veri['date']=pd.to_datetime(veri['date'])
 
 #%% Sayfa 1 özet dataframe
@@ -77,4 +77,6 @@ for fuel_type in data.columns[3:-1]:
 daily = filtered_data.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam KGÜP":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","PTF":"mean"})
 daily[0:] = daily[0:].astype(int)
 daily = daily.reset_index()
-st.write(daily, full_width=True)
+daily.loc[:, (daily != 0).any(axis=0)]
+
+#bst.write(daily, full_width=True)
