@@ -14,7 +14,7 @@ import numpy as np
 
 
 #%%veri oku
-veri=pd.read_csv('C:/ptfdegisim/veri.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+veri=pd.read_csv('veri.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
 veri['date']=pd.to_datetime(veri['date'])
 
 #%% Sayfa 1 özet dataframe
