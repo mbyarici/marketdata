@@ -42,10 +42,11 @@ filtered_data = data[(data['Katılımcı'].isin(selected_organizations)) &
                      (data['Tarih'].dt.date <= selected_days[1]) &
                      (data['Tarih'].dt.hour >= selected_hours[0]) &
                      (data['Tarih'].dt.hour <= selected_hours[1])]
-
+tabledata=filtered_data.copy()
+filtered_data=filtered_data.loc[:, (filtered_data != 0).any(axis=0)]
 #%% charts
 
-for fuel_type in data.columns[3:-1]:
+for fuel_type in filtered_data.columns[3:-1]:
     fig, ax = plt.subplots()
     
     # Filter data for the current fuel type
@@ -74,9 +75,9 @@ for fuel_type in data.columns[3:-1]:
     # Display the chart
     st.pyplot(fig)
 
-daily = filtered_data.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam KGÜP":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","PTF":"mean"})
+daily = tabledata.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam KGÜP":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","PTF":"mean"})
 daily[0:] = daily[0:].astype(int)
 daily = daily.reset_index()
-daily.loc[:, (daily != 0).any(axis=0)]
+daily=daily.loc[:, (daily != 0).any(axis=0)]
 
-#bst.write(daily, full_width=True)
+st.write(daily, full_width=True)
