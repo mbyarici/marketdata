@@ -4,44 +4,77 @@ Created on Tue May 23 17:08:22 2023
 
 @author: mustafayarici
 """
+
+from datetime import datetime
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import numpy as np
-import time
 
+
+#%%veri oku
 veri=pd.read_csv('veri.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
-#%%
 veri['date']=pd.to_datetime(veri['date'])
-print("veri alındı")
 
-#%%
+#%% Sayfa 1 özet dataframe
 
-print(veri['date'].head(5))
-print(veri[['date']].dtypes)
+data=veri[["date","organizationShortName","toplam","dogalgaz","ruzgar","linyit","ithalKomur","barajli","mcp"]]
+data.columns=["Tarih","Katılımcı","Toplam KGÜP","Doğalgaz","Rüzgar","Linyit","İthal Kömür","Barajlı","PTF"]
+#%%org multi filtre
 
-min_date = veri['date'].dt.date.min()
-max_date = veri['date'].dt.date.max()
-#%%
-#min_date = datetime.date(veri['date'][0].year,veri['date'][0].month,veri['date'][0].day)
-#max_date = datetime.date(veri['date'].iloc[-1].year,veri['date'].iloc[-1].month,veri['date'].iloc[-1].day)
-date1 = st.date_input('Gün 1',value=min_date,min_value=min_date,max_value=max_date)
-date2 = st.date_input('Gün 2',value=min_date, min_value=min_date,max_value=max_date)
+selected_organizations = st.multiselect('Organizasyon Seçiniz', data['Katılımcı'].unique())
 
-date1=str(date1)
-date2=str(date2)
-#%%
+#%%day select
 
-orglist = veri['organizationShortName'].drop_duplicates()
+selected_days = st.slider('Tarih Seçiniz', min_value=min(data['Tarih']).date(), 
+                          max_value=max(data['Tarih']).date(), 
+                          value=(min(data['Tarih']).date(), max(data['Tarih']).date()))
 
-#%%
+#%% hour select
 
-org_choice = st.sidebar.multiselect("Org:", orglist, default=None)
+selected_hours = st.slider('Saat Seçiniz', min_value=0, max_value=23, value=(0, 23))
 
-#%%
-org_select = veri[veri['organizationShortName'].isin(org_choice)]
+#%% tüm filtreler
 
-#%%
+filtered_data = data[(data['Katılımcı'].isin(selected_organizations)) &
+                     (data['Tarih'].dt.date >= selected_days[0]) &
+                     (data['Tarih'].dt.date <= selected_days[1]) &
+                     (data['Tarih'].dt.hour >= selected_hours[0]) &
+                     (data['Tarih'].dt.hour <= selected_hours[1])]
 
-st.dataframe(org_select)
+#%% charts
 
+for fuel_type in data.columns[3:-1]:
+    fig, ax = plt.subplots()
+    
+    # Filter data for the current fuel type
+    fuel_data = filtered_data[['Tarih', 'Katılımcı', fuel_type]]
+    
+    # Plot the data for each organization
+    for org in selected_organizations:
+        org_data = fuel_data[fuel_data['Katılımcı'] == org]
+        ax.plot(org_data['Tarih'], org_data[fuel_type], linewidth=2, label=org)
+    
+    # Rotate x-axis tick labels for better readability
+    plt.xticks(rotation=45, ha='right')
+    
+    # Set plot labels and title
+    ax.set_xlabel('Tarih')
+    ax.set_ylabel('KGÜP')
+    ax.set_title(f'KGÜP {fuel_type}')
+    
+    # Add separate legends for each organization
+    ax.legend(loc='upper left')
+    
+    # Format x-axis as readable date values
+    ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
+    
+    # Display the chart
+    st.pyplot(fig)
+
+daily = filtered_data.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam KGÜP":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","PTF":"mean"})
+daily[0:] = daily[0:].astype(int)
+daily = daily.reset_index()
+st.write(daily, full_width=True)
