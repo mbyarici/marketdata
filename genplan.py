@@ -21,6 +21,7 @@ veri['date']=pd.to_datetime(veri['date'])
 
 data=veri[["date","organizationShortName","toplam","dogalgaz","ruzgar","linyit","ithalKomur","barajli","mcp"]]
 data.columns=["Tarih","Katılımcı","Toplam KGÜP","Doğalgaz","Rüzgar","Linyit","İthal Kömür","Barajlı","PTF"]
+
 #%%org multi filtre
 
 selected_organizations = st.multiselect('Organizasyon Seçiniz', data['Katılımcı'].unique())
@@ -75,9 +76,12 @@ for fuel_type in filtered_data.columns[3:-1]:
     # Display the chart
     st.pyplot(fig)
 
-daily = tabledata.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam KGÜP":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","PTF":"mean"})
-daily[0:] = daily[0:].astype(int)
-daily = daily.reset_index()
-daily=daily.loc[:, (daily != 0).any(axis=0)]
 
-st.write(daily, full_width=True)
+daily = None  # Initialize daily DataFrame
+if not tabledata.empty:
+    daily = tabledata.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam KGÜP":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","PTF":"mean"})
+    daily[0:] = daily[0:].astype(int)
+    daily = daily.reset_index()
+    daily=daily.loc[:, (daily != 0).any(axis=0)]
+if daily is not None:
+    st.write(daily, full_width=True)
