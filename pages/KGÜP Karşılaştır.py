@@ -29,10 +29,10 @@ data.columns=["Tarih","Katılımcı","Doğalgaz","Rüzgar","Linyit","İthal Köm
 #%%filtreler
 
 selected_organization = st.selectbox('Organizasyon Seçimi', data['Katılımcı'].unique())
-selected_day1 = st.date_input('Select Day 1', key="day1", min_value=min(data['Tarih']).date(),
+selected_day1 = st.date_input('Gün 1 Seçimi', key="day1", min_value=min(data['Tarih']).date(),
                              max_value=max(data['Tarih']).date(),
                              value=min(data['Tarih']).date())
-selected_day2 = st.date_input('Select Day 2', key="day2", min_value=min(data['Tarih']).date(),
+selected_day2 = st.date_input('Gün 2 Seçimi', key="day2", min_value=min(data['Tarih']).date(),
                              max_value=max(data['Tarih']).date(),
                              value=max(data['Tarih']).date())
 
@@ -95,14 +95,14 @@ for i, fuel_type in enumerate(non_zero_fuel_types):
         data_day = data_day.sort_values(by='Tarih')
 
         x_offset = np.arange(len(hours)) - 0.2 + (day_color_mapping[day] == 'red') * 0.4
-        ax.bar(x_offset, data_day[fuel_type], width=0.4, label=f'{fuel_type} - Day {day.day}', color=day_color_mapping[day])
+        ax.bar(x_offset, data_day[fuel_type], width=0.4, label=f'{fuel_type} - Gün {day.day}', color=day_color_mapping[day])
 
     ax.set_xticks(np.arange(len(hours)))
     ax.set_xticklabels(hours)
-    ax.set_xlabel('Hour')
-    ax.set_ylabel('Fuel Consumption')
-    ax.set_title(f'{fuel_type} Consumption by Hour for Selected Days and Organization')
-    ax.legend(title='Fuel Type', bbox_to_anchor=(1.05, 1), loc='upper left')
+    ax.set_xlabel('Saatler')
+    ax.set_ylabel('KGÜP MWh')
+    ax.set_title(f'{fuel_type} Seçilen Günler Saatlik Üretim Karşılaştırması')
+    ax.legend(title='Yakıt Tipi', bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
 
