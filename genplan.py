@@ -47,34 +47,35 @@ tabledata=filtered_data.copy()
 filtered_data=filtered_data.loc[:, (filtered_data != 0).any(axis=0)]
 #%% charts
 
-for fuel_type in filtered_data.columns[3:-1]:
-    fig, ax = plt.subplots()
-    
-    # Filter data for the current fuel type
-    fuel_data = filtered_data[['Tarih', 'Katılımcı', fuel_type]]
-    
-    # Plot the data for each organization
-    for org in selected_organizations:
-        org_data = fuel_data[fuel_data['Katılımcı'] == org]
-        ax.plot(org_data['Tarih'], org_data[fuel_type], linewidth=2, label=org)
-    
-    # Rotate x-axis tick labels for better readability
-    plt.xticks(rotation=45, ha='right')
-    
-    # Set plot labels and title
-    ax.set_xlabel('Tarih')
-    ax.set_ylabel('KGÜP')
-    ax.set_title(f'KGÜP {fuel_type}')
-    
-    # Add separate legends for each organization
-    ax.legend(loc='upper left')
-    
-    # Format x-axis as readable date values
-    ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
-    
-    # Display the chart
-    st.pyplot(fig)
+if not filtered_data.empty:
+    for fuel_type in filtered_data.columns[3:-1]:
+        fig, ax = plt.subplots()
+        
+        # Filter data for the current fuel type
+        fuel_data = filtered_data[['Tarih', 'Katılımcı', fuel_type]]
+        
+        # Plot the data for each organization
+        for org in selected_organizations:
+            org_data = fuel_data[fuel_data['Katılımcı'] == org]
+            ax.plot(org_data['Tarih'], org_data[fuel_type], linewidth=2, label=org)
+        
+        # Rotate x-axis tick labels for better readability
+        plt.xticks(rotation=45, ha='right')
+        
+        # Set plot labels and title
+        ax.set_xlabel('Tarih')
+        ax.set_ylabel('KGÜP')
+        ax.set_title(f'KGÜP {fuel_type}')
+        
+        # Add separate legends for each organization
+        ax.legend(loc='upper left')
+        
+        # Format x-axis as readable date values
+        ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
+        
+        # Display the chart
+        st.pyplot(fig)
 
 
 daily = None  # Initialize daily DataFrame
