@@ -13,20 +13,17 @@ import matplotlib.dates as mdates
 import numpy as np
 
 #st.set_page_config(layout="wide")
-#%%veri oku
+#%%veri
 #veri=pd.read_csv('C:/ptfdegisim/veri.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
-veri=pd.read_csv('veri.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+veri = pd.read_excel('marketveri.xlsx', sheet_name='secim')
 veri['date']=pd.to_datetime(veri['date'])
 
-#%% Sayfa 1 özet dataframe
+#%% data
 
 data=veri[["date","organizationShortName","dogalgaz","ruzgar","linyit","ithalKomur","barajli"]]
 data.columns=["Tarih","Katılımcı","Doğalgaz","Rüzgar","Linyit","İthal Kömür","Barajlı"]
 
-#%%
-
-
-#%%filtreler
+#%%filter
 
 selected_organization = st.selectbox('Organizasyon Seçimi', data['Katılımcı'].unique())
 selected_day1 = st.date_input('Gün 1 Seçimi', key="day1", min_value=min(data['Tarih']).date(),
@@ -36,35 +33,35 @@ selected_day2 = st.date_input('Gün 2 Seçimi', key="day2", min_value=min(data['
                              max_value=max(data['Tarih']).date(),
                              value=max(data['Tarih']).date())
 
-#%% Filtreli veriler
+#%% filter
 
-# Filter data based on user inputs for Day 1
+# Filter data Day 1
 data_day1 = data[(data['Katılımcı'] == selected_organization) & (data['Tarih'].dt.date == selected_day1)]
 
-# Filter data based on user inputs for Day 2
+# Filter data Day 2
 data_day2 = data[(data['Katılımcı'] == selected_organization) & (data['Tarih'].dt.date == selected_day2)]
 
-# Filter data based on user inputs for all selected days and organization
+# Filter data days and organization
 data_all = data[(data['Katılımcı'] == selected_organization) &
                 ((data['Tarih'].dt.date == selected_day1) | (data['Tarih'].dt.date == selected_day2))]
 
-# Combine both days' data
+# Combine 
 data_combined = pd.concat([data_day1, data_day2])
 
-# Convert the 'Date' column to datetime format
+# Convert datetime format
 data_combined['Tarih'] = pd.to_datetime(data_combined['Tarih'])
 
-# Sort the combined data based on the hour order and then the date
+# Sort hour then the date
 data_combined = data_combined.sort_values(by=['Tarih', 'Katılımcı'])
 
-# Get unique hours
+# unique hours
 hours = data_combined['Tarih'].dt.hour.unique()
 
-#%% Grafik ayarlamaları
-# Function to set colors for each day
+#%% 
+# set colors
 def get_colors():
     return ['blue', 'red']
-# Get colors for each day
+# Get color
 colors = get_colors()
 
 # Create a mapping between days and their corresponding colors
@@ -79,14 +76,14 @@ for fuel_type in data_combined.columns[2:]:
     if len(non_zero_values_day1) > 0 or len(non_zero_values_day2) > 0:
         non_zero_fuel_types.append(fuel_type)
 
-# Create a figure and axis for each non-zero fuel type
+# Create a figure and axis
 if len(non_zero_fuel_types) > 1:
     fig, axes = plt.subplots(len(non_zero_fuel_types), 1, figsize=(10, 5 * len(non_zero_fuel_types)))
 else:
     fig, ax = plt.subplots(figsize=(10, 6))
     axes = [ax]
 
-# Plot the bars for each non-zero fuel type and each day using different colors
+# Plot the bars
 for i, fuel_type in enumerate(non_zero_fuel_types):
     ax = axes[i]
 
@@ -106,7 +103,7 @@ for i, fuel_type in enumerate(non_zero_fuel_types):
     plt.xticks(rotation=0, ha='right')
     plt.tight_layout()
 
-# Display the plots using Streamlit
+# Display
 st.pyplot(fig)
 
 

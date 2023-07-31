@@ -14,7 +14,7 @@ import numpy as np
 
 
 #%%veri oku
-veri=pd.read_csv('veri.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+veri = pd.read_excel('marketveri.xlsx', sheet_name='secim')
 veri['date']=pd.to_datetime(veri['date'])
 
 #%% Sayfa 1 özet dataframe
