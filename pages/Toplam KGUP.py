@@ -13,8 +13,8 @@ import matplotlib.dates as mdates
 import numpy as np
 
 #%%veri
-#kgupsum=pd.read_excel('C:/ptfdegisim/marketveri.xlsx', sheet_name='genel')
-kgupsum=pd.read_excel('marketveri.xlsx', sheet_name='genel')
+kgupsum = pd.read_excel('C:/marketdata/marketveri.xlsx', sheet_name='genel')#deploydan önce sil
+#kgupsum=pd.read_excel('marketveri.xlsx', sheet_name='genel')
 kgupsum['tarih']=pd.to_datetime(kgupsum['tarih'])
 
 #%% data
@@ -71,7 +71,7 @@ for fuel_type in filtered_data.columns[1:]:
     # Display
     st.pyplot(fig)
 
-daily = tabledata.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam KGÜP":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","Akarsu":"sum","Diğer":"sum"})
+daily = tabledata.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","Akarsu":"sum","Diğer":"sum"})
 daily[0:] = daily[0:].astype(int)
 daily = daily.reset_index()
 daily=daily.loc[:, (daily != 0).any(axis=0)]
