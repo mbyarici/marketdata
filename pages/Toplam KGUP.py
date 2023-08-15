@@ -13,8 +13,8 @@ import matplotlib.dates as mdates
 import numpy as np
 
 #%%veri
-kgupsum = pd.read_excel('C:/marketdata/marketveri.xlsx', sheet_name='genel')#deploydan önce sil
-#kgupsum=pd.read_excel('marketveri.xlsx', sheet_name='genel')
+#kgupsum = pd.read_excel('C:/marketdata/marketveri.xlsx', sheet_name='genel')#deploydan önce sil
+kgupsum=pd.read_excel('marketveri.xlsx', sheet_name='genel')
 kgupsum['tarih']=pd.to_datetime(kgupsum['tarih'])
 
 #%% data
