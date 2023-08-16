@@ -14,8 +14,8 @@ import numpy as np
 
 #st.set_page_config(layout="wide")
 #%%veri
-#veri = pd.read_excel('C:/marketdata/marketveri.xlsx', sheet_name='secim')#deploydan önce sil
-veri = pd.read_excel('marketveri.xlsx', sheet_name='secim')
+
+veri=pd.read_csv('main.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
 veri['date']=pd.to_datetime(veri['date'])
 
 #%% data

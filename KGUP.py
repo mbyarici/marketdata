@@ -14,24 +14,32 @@ import openpyxl
 import numpy as np
 
 
-#%%data
-veri = pd.read_excel('marketveri.xlsx', sheet_name='secim')
-veri['date']=pd.to_datetime(veri['date'])
+#%% veri yükle
 
-#%% data
+@st.cache_data  # Allow caching DataFrame
+def load_and_preprocess_data():
+    veri=pd.read_csv('main.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+    veri['date'] = pd.to_datetime(veri['date'])
+    
+    data = veri[["date","organizationShortName","toplam","dogalgaz","ruzgar","linyit","ithalKomur","barajli","mcp"]]
+    data.columns = ["Tarih","Katılımcı","Toplam KGÜP","Doğalgaz","Rüzgar","Linyit","İthal Kömür","Barajlı","PTF"]
+    
+    katilimci = data['Katılımcı'].unique()
+    minvalue = min(data['Tarih']).date()
+    maxvalue = max(data['Tarih']).date()
+    
+    return data, katilimci, minvalue, maxvalue
 
-data=veri[["date","organizationShortName","toplam","dogalgaz","ruzgar","linyit","ithalKomur","barajli","mcp"]]
-data.columns=["Tarih","Katılımcı","Toplam KGÜP","Doğalgaz","Rüzgar","Linyit","İthal Kömür","Barajlı","PTF"]
+data, katilimci, minvalue, maxvalue = load_and_preprocess_data()
 
-#%%filter
-
-selected_organizations = st.multiselect('Organizasyon Seçiniz', data['Katılımcı'].unique())
+#%%
+selected_organizations = st.multiselect('Organizasyon Seçiniz', katilimci)
 
 #%%day select
 
-selected_days = st.slider('Tarih Seçiniz', min_value=min(data['Tarih']).date(), 
-                          max_value=max(data['Tarih']).date(), 
-                          value=(min(data['Tarih']).date(), max(data['Tarih']).date()))
+selected_days = st.slider('Tarih Seçiniz', min_value=minvalue, 
+                          max_value=maxvalue, 
+                          value=(minvalue, maxvalue))
 
 #%% hour select
 
@@ -88,4 +96,4 @@ if not tabledata.empty:
     daily = daily.reset_index()
     daily=daily.loc[:, (daily != 0).any(axis=0)]
 if daily is not None:
-    st.write(daily, full_width=True)
+    st.write(daily)

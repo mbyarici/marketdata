@@ -13,8 +13,8 @@ import matplotlib.dates as mdates
 import numpy as np
 
 #%%veri
-#kgupsum = pd.read_excel('C:/marketdata/marketveri.xlsx', sheet_name='genel')#deploydan önce sil
-kgupsum=pd.read_excel('marketveri.xlsx', sheet_name='genel')
+
+kgupsum=pd.read_csv('genel.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
 kgupsum['tarih']=pd.to_datetime(kgupsum['tarih'])
 
 #%% data
@@ -76,4 +76,4 @@ daily[0:] = daily[0:].astype(int)
 daily = daily.reset_index()
 daily=daily.loc[:, (daily != 0).any(axis=0)]
 
-st.write(daily, full_width=True)
+st.write(daily)
