@@ -14,7 +14,7 @@ import openpyxl
 import numpy as np
 import datetime
 
-
+st.set_page_config(layout="centered")
 #%% veri yükle
 
 @st.cache_data  # Allow caching DataFrame
@@ -32,8 +32,6 @@ def load_and_preprocess_data():
     return data, katilimci, minvalue, maxvalue
 
 data, katilimci, minvalue, maxvalue = load_and_preprocess_data()
-
-st.set_page_config(layout="centered")
 
 #%%
 selected_organizations = st.multiselect('Organizasyon Seçiniz', katilimci)
