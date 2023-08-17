@@ -12,6 +12,9 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 
+
+st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
+st.set_page_config(layout="centered")
 #%%veri
 kgupsum=pd.read_csv('genel.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
 kgupsum['tarih']=pd.to_datetime(kgupsum['tarih'])
@@ -23,8 +26,6 @@ kgupsum["linyit"]=kgupsum["linyit"]+kgupsum["tasKomur"]
 #%%
 data=kgupsum[["tarih","toplam","dogalgaz","ruzgar","linyit","ithalKomur","barajli","akarsu","diger"]]
 data.columns=["Tarih","Toplam","Doğalgaz","Rüzgar","Linyit","İthal Kömür","Barajlı","Akarsu","Diğer"]
-
-st.set_page_config(layout="centered")
 
 #%%day select
 

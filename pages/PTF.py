@@ -12,15 +12,15 @@ import datetime
 import xlsxwriter
 from io import BytesIO,StringIO
 
+st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
+st.set_page_config(layout="wide")
+
 #%% yükle
 result= pd.read_csv('PTF.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
 result['date']=pd.to_datetime(result['date'])
 
 #%%
 result['shortdate']=pd.to_datetime(result['date']).dt.strftime("%Y-%m-%d")
-
-#%%
-st.set_page_config(layout="wide")
 
 #%%
 min_date = datetime.date(result['date'][0].year,result['date'][0].month,result['date'][0].day)

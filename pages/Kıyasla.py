@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 
+st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
 st.set_page_config(layout="centered")
 #%%veri
 

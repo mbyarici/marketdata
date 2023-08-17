@@ -14,6 +14,8 @@ import openpyxl
 import numpy as np
 import datetime
 
+st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
+
 st.set_page_config(layout="centered")
 #%% veri yükle
 
