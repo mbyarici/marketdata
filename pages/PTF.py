@@ -21,7 +21,7 @@ hide_st_style = """
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-st.set_page_config( page_title="EMBA",layout="wide")
+st.set_page_config(layout="wide")
 
 #%% yükle
 result= pd.read_csv('PTF.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
