@@ -13,7 +13,7 @@ import matplotlib.dates as mdates
 import openpyxl
 import numpy as np
 import datetime
-import XlsxWriter
+import xlsxwriter
 from io import BytesIO,StringIO
 
 #%% veri yükle
