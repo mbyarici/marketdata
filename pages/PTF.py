@@ -13,7 +13,7 @@ import xlsxwriter
 from io import BytesIO,StringIO
 
 #%% yükle
-result= pd.read_csv('C:/marketdata/PTF.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+result= pd.read_csv('PTF.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
 result['date']=pd.to_datetime(result['date'])
 
 #%%
