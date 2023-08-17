@@ -33,6 +33,8 @@ def load_and_preprocess_data():
 
 data, katilimci, minvalue, maxvalue = load_and_preprocess_data()
 
+st.set_page_config(layout="centered")
+
 #%%
 selected_organizations = st.multiselect('Organizasyon Seçiniz', katilimci)
 
