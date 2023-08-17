@@ -13,8 +13,15 @@ import xlsxwriter
 from io import BytesIO,StringIO
 
 st.set_page_config(layout="wide")
-st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
 
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%% yükle
 result= pd.read_csv('PTF.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
