@@ -21,9 +21,9 @@ hide_st_style = """
             header {visibility: hidden;}
             </style>
             """
-st.markdown(hide_st_style, unsafe_allow_html=True)
+st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="wide")
 
-st.set_page_config( page_title="EMBA",layout="wide")
+st.markdown(hide_st_style, unsafe_allow_html=True)
 
 
 #%% veri yükle

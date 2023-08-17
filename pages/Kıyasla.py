@@ -12,8 +12,6 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 
-st.set_page_config(layout="centered")
-
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
@@ -21,6 +19,8 @@ hide_st_style = """
             header {visibility: hidden;}
             </style>
             """
+st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="wide")
+
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%veri
