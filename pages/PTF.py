@@ -17,12 +17,10 @@ result= pd.read_csv('PTF.csv',encoding='utf-8-sig',sep=";", decimal=",",index_co
 result['date']=pd.to_datetime(result['date'])
 
 #%%
-
 result['shortdate']=pd.to_datetime(result['date']).dt.strftime("%Y-%m-%d")
 
 #%%
 st.set_page_config(layout="wide")
-#st.set_option('dataframe.display.all_columns', True)
 
 #%%
 min_date = datetime.date(result['date'][0].year,result['date'][0].month,result['date'][0].day)
@@ -32,8 +30,6 @@ date2 = st.date_input('Gün 2',value=min_date, min_value=min_date,max_value=max_
 
 date1=str(date1)
 date2=str(date2)
-
-print("result read")
 
 #%%
 base1=result[result['shortdate']==date2].reset_index(drop=True)
@@ -52,8 +48,6 @@ summary.insert(0,str(date2)+" PTF",base1['PTF'].reset_index(drop=True))
 
 st.write("Gün2 - Gün1 Farkı")
 st.dataframe(summary.style.format("{:.2f}"),height=875,use_container_width=True)
-
-print("result publish")
 
 #%%
 def export_excel():
@@ -82,5 +76,4 @@ st.download_button(label='📥 Download Current Result',
                                 data=df_xlsx ,
                                 file_name= str(date2)+" "+str(date1)+' Farkı.xlsx')
 
-print("result download")
 

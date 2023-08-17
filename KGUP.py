@@ -90,11 +90,11 @@ if not filtered_data.empty:
         st.pyplot(fig)
 
 
-daily = None  # Initialize daily DataFrame
+daily = None
 if not tabledata.empty:
     daily = tabledata.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam KGÜP":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","PTF":"mean"})
     daily[0:] = daily[0:].astype(int)
     daily = daily.reset_index()
     daily=daily.loc[:, (daily != 0).any(axis=0)]
 if daily is not None:
-    st.write(daily)
+    st.dataframe(daily,height=600,use_container_width=True)
