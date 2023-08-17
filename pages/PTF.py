@@ -19,7 +19,7 @@ hide_st_style = """
             header {visibility: hidden;}
             </style>
             """
-
+st.set_page_config(layout="wide")
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 
