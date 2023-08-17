@@ -12,8 +12,6 @@ import datetime
 import xlsxwriter
 from io import BytesIO,StringIO
 
-st.set_page_config(layout="wide")
-
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
