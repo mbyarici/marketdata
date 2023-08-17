@@ -14,9 +14,9 @@ import openpyxl
 import numpy as np
 import datetime
 
+st.set_page_config(layout="centered")
 st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
 
-st.set_page_config(layout="centered")
 #%% veri yükle
 
 @st.cache_data  # Allow caching DataFrame

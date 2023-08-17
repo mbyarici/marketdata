@@ -12,8 +12,9 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 
-st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
 st.set_page_config(layout="centered")
+st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
+
 #%%veri
 
 veri=pd.read_csv('main.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)

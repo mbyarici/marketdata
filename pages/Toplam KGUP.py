@@ -12,9 +12,9 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 
-
-st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
 st.set_page_config(layout="centered")
+st.markdown('<link rel="stylesheet" href="styles.css">', unsafe_allow_html=True)
+
 #%%veri
 kgupsum=pd.read_csv('genel.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
 kgupsum['tarih']=pd.to_datetime(kgupsum['tarih'])
