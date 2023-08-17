@@ -19,7 +19,8 @@ hide_st_style = """
             header {visibility: hidden;}
             </style>
             """
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", unsafe_allow_html=True,layout="wide")
+
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 
