@@ -21,9 +21,11 @@ hide_st_style = """
             header {visibility: hidden;}
             </style>
             """
-st.set_page_config( page_title="EMBA", page_icon=":chart_with_upwards_trend:",layout="wide", unsafe_allow_html=True)
-
 st.markdown(hide_st_style, unsafe_allow_html=True)
+
+st.set_page_config( page_title="EMBA", page_icon=":chart_with_upwards_trend:",layout="wide")
+
+
 #%% veri yükle
 
 @st.cache_data  # Allow caching DataFrame
