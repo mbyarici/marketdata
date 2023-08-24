@@ -14,6 +14,18 @@ import openpyxl
 import numpy as np
 import datetime
 
+
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="centered")
+
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
 #%% veri yükle
 
 @st.cache_data  # Allow caching DataFrame
