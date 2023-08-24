@@ -56,7 +56,7 @@ filtered_data=filtered_data.loc[:, (filtered_data != 0).any(axis=0)]
 #%% charts
 
 for fuel_type in filtered_data.columns[1:]:
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 4))
     
     # Filter data
     fuel_data = filtered_data[['Tarih',  fuel_type]]
