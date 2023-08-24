@@ -30,7 +30,8 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 
 @st.cache_data  # Allow caching DataFrame
 def load_and_preprocess_data():
-    veri=pd.read_csv('fark.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)    
+    veri=pd.read_csv('fark.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+    veri['date'] = pd.to_datetime(veri['date'])    
     veri.rename(columns = {'date':'Tarih','organizationShortName':'Katılımcı','toplam':'Toplam','dogalgaz':'Doğalgaz',
                                 'linyit':'Linyit','akarsu':'Akarsu','barajli':'Barajlı','ithalKomur':'İthal Kömür',
                                 'ruzgar':'Rüzgar','diger':'Diğer','mcp':'PTF','smp':'SMF'}, inplace = True)
