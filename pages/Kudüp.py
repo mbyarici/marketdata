@@ -51,7 +51,7 @@ selected_organizations = st.selectbox('Organizasyon Seçiniz', katilimci)
 
 weeks = veri['Tarih'].dt.isocalendar().week.unique()
 
-selected_weeks = st.slider('Select Weeks', min_value=int(min(weeks)), max_value=int(max(weeks)), value=(int(min(weeks)), int(max(weeks))))
+selected_weeks = st.slider('Hafta Seçimi', min_value=int(min(weeks)), max_value=int(max(weeks)), value=(int(min(weeks)), int(max(weeks))))
 
 veri = veri[veri['Tarih'].dt.isocalendar().week.between(selected_weeks[0], selected_weeks[1])]
 
