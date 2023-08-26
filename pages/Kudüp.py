@@ -22,15 +22,14 @@ hide_st_style = """
             header {visibility: hidden;}
             </style>
             """
-st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="centered")
+st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="wide")
 
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%% veri yükle
 
-#@st.cache_data  # Allow caching DataFrame
+@st.cache_data  # Allow caching DataFrame
 def load_and_preprocess_data():
-    
     veri=pd.read_csv('fark.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)  
     veri['date'] = pd.to_datetime(veri['date'])    
     veri.rename(columns = {'date':'Tarih','organizationShortName':'Katılımcı','toplam':'Toplam','dogalgaz':'Doğalgaz',
@@ -70,47 +69,30 @@ filtered_data = veri[(veri['Katılımcı'] == selected_organizations) &
                      (veri['Tarih'].dt.date <= selected_days[1])] 
 
 #%%
-KGUP=['Toplam','Doğalgaz','Linyit','Barajlı','Akarsu','İthal Kömür','Rüzgar','Diğer']
-KUDUPdev=['KUDÜP Değişim','Gaz KUDÜP Değişim','Linyit KUDÜP Değişim','Barajlı KUDÜP Değişim','Akarsu KUDÜP Değişim','İthal Kömür KUDÜP Değişim','Rüzgar KUDÜP Değişim','Diğer KUDÜP Değişim']
-Verisdev=['Veriş Değişim','Gaz Veriş Değişim','Linyit Veriş Değişim','Barajlı Veriş Değişim','Akarsu Veriş Değişim','İthal Kömür Veriş Değişim','Rüzgar Veriş Değişim','Diğer Veriş Değişim']
-width = pd.Timedelta(minutes=45)
 
-#%%
-charttable=pd.DataFrame()
+import plotly.graph_objects as go
+
+KGUP = ['Toplam', 'Doğalgaz', 'Linyit', 'Barajlı', 'Akarsu', 'İthal Kömür', 'Rüzgar', 'Diğer']
+KUDUPdev = ['KUDÜP Değişim', 'Gaz KUDÜP Değişim', 'Linyit KUDÜP Değişim', 'Barajlı KUDÜP Değişim', 'Akarsu KUDÜP Değişim', 'İthal Kömür KUDÜP Değişim', 'Rüzgar KUDÜP Değişim', 'Diğer KUDÜP Değişim']
+Verisdev = ['Veriş Değişim', 'Gaz Veriş Değişim', 'Linyit Veriş Değişim', 'Barajlı Veriş Değişim', 'Akarsu Veriş Değişim', 'İthal Kömür Veriş Değişim', 'Rüzgar Veriş Değişim', 'Diğer Veriş Değişim']
+
+
+charttable = pd.DataFrame()
 if not filtered_data.empty:
-    for KGUP, KUDUPdev,Verisdev in zip(KGUP, KUDUPdev,Verisdev):
-        fig, ax = plt.subplots(figsize=(10, 4))
+    #fig = go.Figure()
 
-        #plot 
+    for KGUP, KUDUPdev, Verisdev in zip(KGUP, KUDUPdev, Verisdev):
+        fig = go.Figure()
         if not filtered_data[KGUP].sum() == 0:
-            # positive and negative
-            positive_kudup = np.maximum(0, filtered_data[KUDUPdev])
-            negative_kudup = np.minimum(0, filtered_data[KUDUPdev])
-            positive_veris = np.maximum(0, filtered_data[Verisdev])
-            negative_veris = np.minimum(0, filtered_data[Verisdev])
-    
-            # Plot
-            ax.bar(filtered_data['Tarih'], filtered_data[KGUP], label='KGÜP', width=width, align='edge')
-            ax.bar(filtered_data['Tarih'], positive_kudup, label='KUDÜP-KGÜP', color='green', width=width, align='edge')
-            ax.bar(filtered_data['Tarih'], negative_kudup, label='KUDÜP-KGÜP(-)', color='green', width=width, align='edge')
-            ax.bar(filtered_data['Tarih'], positive_veris, label='Veriş-KUDÜP', color='red', width=width, align='edge')
-            ax.bar(filtered_data['Tarih'], negative_veris, label='Veriş-KUDÜP(-)', color='red', width=width, align='edge')
-            
-            # 
-            ax.set_xlabel('Tarih')
-            ax.set_ylabel('MWh')
-            ax.set_title(f' {KGUP}')
-            ax.legend()
-    
-            # Better readability
-            ax.set_xticks(filtered_data['Tarih'])
-            ax.set_xticklabels(filtered_data['Tarih'], rotation=45)
-    
-            # Format
-            ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
-            # Display
-            st.pyplot(fig)
+            fig.add_trace(go.Bar(x=filtered_data['Tarih'], y=filtered_data[KGUP], name='KGÜP',  offset=0))
+            fig.add_trace(go.Bar(x=filtered_data['Tarih'], y=filtered_data[KUDUPdev], name='KUDÜP-KGÜP', marker_color='green',  offset=0))
+            fig.add_trace(go.Bar(x=filtered_data['Tarih'], y=filtered_data[Verisdev], name='Veriş-KUDÜP', marker_color='red',  offset=0))
+
+            fig.update_layout(barmode='relative', title=KGUP, height=500, width=1700)
+            fig.update_xaxes(tickformat='%Y-%m-%d %H')
+
+            st.plotly_chart(fig)
             charttable=pd.concat([charttable,filtered_data[KGUP],filtered_data[KUDUPdev],filtered_data[Verisdev]], axis=1)
+            
     charttable.set_index(filtered_data['Tarih'], inplace=True)  # Set Date as the index
-    st.dataframe(charttable,height=600,use_container_width=True)
+    st.dataframe(charttable, height=600, use_container_width=True)
