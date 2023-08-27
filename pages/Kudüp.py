@@ -91,7 +91,7 @@ if not filtered_data.empty:
             fig.update_layout(barmode='relative', title=KGUP, height=500, width=1700)
             fig.update_xaxes(tickformat='%Y-%m-%d %H')
 
-            st.plotly_chart(fig)
+            st.plotly_chart(fig,use_container_width=True)
             charttable=pd.concat([charttable,filtered_data[KGUP],filtered_data[KUDUPdev],filtered_data[Verisdev]], axis=1)
             
     charttable.set_index(filtered_data['Tarih'], inplace=True)  # Set Date as the index
