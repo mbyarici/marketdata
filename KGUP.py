@@ -15,6 +15,11 @@ import numpy as np
 import datetime
 import plotly.express as px
 import plotly.graph_objects as go
+from datetime import date
+from datetime import timedelta
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score
+from sklearn.linear_model import LinearRegression
 
 hide_st_style = """
             <style>
