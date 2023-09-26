@@ -28,7 +28,7 @@ hide_st_style = """
             """
 st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="wide")
 
-st.markdown(hide_st_style, unsafe_allow_html=True)
+#st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%
 
@@ -63,31 +63,36 @@ trainparametre=14 # Kaç günlük veri eğitimde kullanılacak
 one_day = timedelta(days=1)
 
 #%%
-X_train=daily[(daily['Tarih'] <= tahminbaslangic)& (daily['Tarih'] > tahminbaslangic-timedelta(days=trainparametre))][['talep', 'rüzgar']]
-y_train=daily[(daily['Tarih'] <= tahminbaslangic)& (daily['Tarih'] > tahminbaslangic-timedelta(days=trainparametre))]['PTF']
+try:
+    X_train=daily[(daily['Tarih'] <= tahminbaslangic)& (daily['Tarih'] > tahminbaslangic-timedelta(days=trainparametre))][['talep', 'rüzgar']]
+    y_train=daily[(daily['Tarih'] <= tahminbaslangic)& (daily['Tarih'] > tahminbaslangic-timedelta(days=trainparametre))]['PTF']
 
-model = LinearRegression()
-model.fit(X_train, y_train)
+    model = LinearRegression()
+    model.fit(X_train, y_train)
 
-X_pred = daily[daily['Tarih'] > tahminbaslangic][['talep', 'rüzgar']]
-y_pred = model.predict(X_pred)
+    X_pred = daily[daily['Tarih'] > tahminbaslangic][['talep', 'rüzgar']]
+    y_pred = model.predict(X_pred)
 
-sonuc=pd.merge(daily[daily['Tarih'] > tahminbaslangic][['Tarih']].reset_index(drop=True),pd.DataFrame(y_pred,columns =['PTF']),left_index=True, right_index=True, how='inner')
-sonuc["PTF"]=round(sonuc["PTF"],0)
+    sonuc=pd.merge(daily[daily['Tarih'] > tahminbaslangic][['Tarih']].reset_index(drop=True),pd.DataFrame(y_pred,columns =['PTF']),left_index=True, right_index=True, how='inner')
+    sonuc["PTF"]=round(sonuc["PTF"],0)
 
-fig = go.Figure()
-fig.add_trace(go.Scatter(x=sonuc['Tarih'], y=sonuc['PTF'], name='Tahmin', mode='lines+markers',text=sonuc['PTF']))
-for i, row in sonuc.iterrows():
-    fig.add_annotation(
-        text=f'PTF={row["PTF"]}',  
-        x=row["Tarih"],         
-        y=row["PTF"] + 50,   
-        showarrow=False    
-    )
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=sonuc['Tarih'], y=sonuc['PTF'], name='Tahmin', mode='lines+markers',text=sonuc['PTF']))
+    for i, row in sonuc.iterrows():
+        fig.add_annotation(
+            text=f'PTF={row["PTF"]}',  
+            x=row["Tarih"],         
+            y=row["PTF"] + 50,   
+            showarrow=False    
+        )
 
-fig.update_layout(title="PTF-Tahmin", height=500, yaxis=dict(title=dict(text="TL/ MWh"),side="left") )
-fig.update_xaxes(tickformat='%Y-%m-%d')
-st.plotly_chart(fig,use_container_width=True)
+    fig.update_layout(title="PTF-Tahmin", height=500, yaxis=dict(title=dict(text="TL/ MWh"),side="left") )
+    fig.update_xaxes(tickformat='%Y-%m-%d')
+    st.plotly_chart(fig,use_container_width=True)
+
+except:
+    st.write("Veri Güncel Değil")
+    pass
 
 
 #%%Arşiv perfrmans
@@ -132,7 +137,7 @@ end_date = date.today()+ timedelta(days=1)
 start_date = end_date - timedelta(days=7)
 date_range = [start_date + timedelta(days=x) for x in range(8)]
 
-# Create a multiselect filter for the last 7 days
+# filter
 selected_dates = st.multiselect("Tahmin ve Eğitim Günleri",  sorted(date_range), default=date_range)
 selected_dates.sort()
 
