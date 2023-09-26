@@ -26,7 +26,7 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%% yükle
 
-veri= pd.read_csv('C:/marketdata/PTF.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+veri= pd.read_csv('PTF.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)#C:/marketdata/
 veri['date']=pd.to_datetime(veri['date'])
 veri.drop(columns = ['createIp','modifyIp','day','hour'],inplace=True)
 veri.rename(columns = {'date':'Tarih'}, inplace = True)
