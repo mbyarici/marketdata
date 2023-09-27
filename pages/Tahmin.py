@@ -99,34 +99,39 @@ except:
 
 df = pd.DataFrame(columns=["Tarih", "Tahmin"])
 
-while tahmingecmis <= tahminbaslangic:
+try:
+    while tahmingecmis <= tahminbaslangic:
+        
+        X_train=daily[(daily['Tarih'] <= tahmingecmis)& (daily['Tarih'] > tahmingecmis-timedelta(days=trainparametre))][['talep', 'rüzgar']]
+        y_train=daily[(daily['Tarih'] <= tahmingecmis)& (daily['Tarih'] > tahmingecmis-timedelta(days=trainparametre))]['PTF']
+        
+        model = LinearRegression()
+        model.fit(X_train, y_train)
+        
+        X_pred = daily[daily['Tarih'] == tahmingecmis+timedelta(days=1)][['talep', 'rüzgar']]
+        y_pred = model.predict(X_pred)
+        
+        df = pd.concat([df, pd.DataFrame({"Tarih": [(tahmingecmis+timedelta(days=1)).strftime("%Y-%m-%d")], "Tahmin": [y_pred[0]]})], ignore_index=True)
     
-    X_train=daily[(daily['Tarih'] <= tahmingecmis)& (daily['Tarih'] > tahmingecmis-timedelta(days=trainparametre))][['talep', 'rüzgar']]
-    y_train=daily[(daily['Tarih'] <= tahmingecmis)& (daily['Tarih'] > tahmingecmis-timedelta(days=trainparametre))]['PTF']
-    
-    model = LinearRegression()
-    model.fit(X_train, y_train)
-    
-    X_pred = daily[daily['Tarih'] == tahmingecmis+timedelta(days=1)][['talep', 'rüzgar']]
-    y_pred = model.predict(X_pred)
-    
-    df = pd.concat([df, pd.DataFrame({"Tarih": [(tahmingecmis+timedelta(days=1)).strftime("%Y-%m-%d")], "Tahmin": [y_pred[0]]})], ignore_index=True)
+        tahmingecmis += one_day
 
-    tahmingecmis += one_day
 
 #%%
+    
+    kiyas=pd.merge(df.reset_index(drop=True),PTF.reset_index(drop=True),left_index=True, right_index=True, how='inner')
+    
+    #%%
+    fig = go.Figure()
+    
+    fig.add_trace(go.Scatter(x=kiyas['Tarih'], y=kiyas['Tahmin'], name='Tahmin', mode='lines+markers'))
+    fig.add_trace(go.Scatter(x=kiyas['Tarih'], y=kiyas['PTF'], name='PTF', marker_color='red', mode='lines+markers'))
+    fig.update_layout(title="Geçmiş Dönem PTF-Tahmin Karşılaştırma", height=500, yaxis=dict(title=dict(text="TL/MWh"),side="left") )
+    fig.update_xaxes(tickformat='%Y-%m-%d')
+    st.plotly_chart(fig,use_container_width=True)
 
-kiyas=pd.merge(df.reset_index(drop=True),PTF.reset_index(drop=True),left_index=True, right_index=True, how='inner')
-
-#%%
-fig = go.Figure()
-
-fig.add_trace(go.Scatter(x=kiyas['Tarih'], y=kiyas['Tahmin'], name='Tahmin', mode='lines+markers'))
-fig.add_trace(go.Scatter(x=kiyas['Tarih'], y=kiyas['PTF'], name='PTF', marker_color='red', mode='lines+markers'))
-fig.update_layout(title="Geçmiş Dönem PTF-Tahmin Karşılaştırma", height=500, yaxis=dict(title=dict(text="TL/MWh"),side="left") )
-fig.update_xaxes(tickformat='%Y-%m-%d')
-st.plotly_chart(fig,use_container_width=True)
-
+except:
+    st.write("Veri Güncel Değil")
+    pass
 
 #%%
 #SAATLİK TAHMİN BÖLÜMÜ
