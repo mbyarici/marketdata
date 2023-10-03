@@ -28,7 +28,7 @@ hide_st_style = """
             """
 st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="wide")
 
-#st.markdown(hide_st_style, unsafe_allow_html=True)
+st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%
 
@@ -183,10 +183,13 @@ print("FBS")
 x_train=FBS_input[["rüzgar",	"Solar"]]
 y_train=FBS_input["FBS"]
 #%%
-regressor = LinearRegression()
-regressor.fit(x_train,y_train)
-fbs_result= regressor.predict(FBS_predict_input)#FBS TAHMİNİ
-
+try:
+    regressor = LinearRegression()
+    regressor.fit(x_train,y_train)
+    fbs_result= regressor.predict(FBS_predict_input)#FBS TAHMİNİ
+except:
+    st.write("Veri Güncel Değil")
+    pass
 #%% 
 
 #FBA TAHMİN BÖLÜMÜ
@@ -215,12 +218,16 @@ fba_veri=fba_veri.loc[(veri["gunler"]>=fba_start) & (veri["gunler"]<songun)]#tra
 #train
 x_train=fba_veri[['Saat_grup1', 'Saat_grup2', 'Saat_grup3', 'Saat_grup4', 'Saat_grup5',"talep"]]#grup saysı değişirse güncellenir
 y_train=fba_veri["FBA"]
-regressor = LinearRegression()
-regressor.fit(x_train,y_train)
 
-#predict
-fba_train = regressor.predict(x_train)
-fba_result = regressor.predict( fba_veri_in[['Saat_grup1', 'Saat_grup2', 'Saat_grup3', 'Saat_grup4', 'Saat_grup5',"talep"]])#FBA TAHMİNİ
+try:
+    regressor = LinearRegression()
+    regressor.fit(x_train,y_train)
+    #predict
+    fba_train = regressor.predict(x_train)
+    fba_result = regressor.predict( fba_veri_in[['Saat_grup1', 'Saat_grup2', 'Saat_grup3', 'Saat_grup4', 'Saat_grup5',"talep"]])#FBA TAHMİNİ
+except:
+    st.write("Veri Güncel Değil")
+    pass
 
 #%%
 
@@ -241,46 +248,55 @@ ptf_saat["Saat"].loc[ptf_saat["Saat"]>17]=4
 ptf_saat["Saat"]=ptf_saat["Saat"].replace(to_replace=[0,1,2,3,4], value=["grup1","grup2","grup3","grup4","grup5"])
 ptf_saat=pd.get_dummies(ptf_saat)
 
-#train ve predict 
-ptf_saat_in=ptf_saat.loc[(veri["gunler"]<songun)]
-ptf_saat_out=ptf_saat.loc[(veri["gunler"]==songun)][["Saat_grup1","Saat_grup2","Saat_grup3","Saat_grup4","Saat_grup5"]].reset_index(drop=True)#sadece gruplar - tahmin edilen fba ve fbs ile doldurulacak
-ptf_saat_out=ptf_saat_out[["Saat_grup1","Saat_grup2","Saat_grup3","Saat_grup4","Saat_grup5"]].reset_index(drop=True).merge((pd.DataFrame((fba_result-fbs_result),columns =['FBA-FBS'])),left_index=True, right_index=True, how='inner')
-
-#PTF train data tablosu
-print("PTF Tahmin Bölümü")
-x_train=ptf_saat_in[["Saat_grup1","Saat_grup2","Saat_grup3","Saat_grup4","Saat_grup5","FBA-FBS"]]
-y_train=ptf_saat_in["PTF"]
-
-#model
-regressor_ptf = LinearRegression()
-regressor_ptf.fit(x_train,y_train)
-
-#PTF TAHMİNİ - Tavan Fiyat Uygulaması
-PTF_result_model1= regressor_ptf.predict(ptf_saat_out)
-PTF_result_model1=pd.DataFrame((PTF_result_model1),columns =['PTF'])
-PTF_result_model1['PTF'].loc[PTF_result_model1['PTF']>ptf_tavan]=ptf_tavan
-
-PTF_result_model1["PTF"]=round(PTF_result_model1["PTF"],0)
-
-fig = go.Figure()
-fig.add_trace(go.Scatter(x=PTF_result_model1.index, y=PTF_result_model1['PTF'], name='Tahmin', mode='lines+markers',text=PTF_result_model1['PTF']))
-for i, row in PTF_result_model1.iterrows():
-    fig.add_annotation(
-        text=f'{row["PTF"]}',  
-        x=i,
-        y=row["PTF"] + 50,   
-        showarrow=False    
-    )
-
-fig.update_layout(title=str(songun) + " Ortalama PTF: " + str(round(PTF_result_model1["PTF"].mean(),2)), height=500, yaxis=dict(title=dict(text="TL/ MWh"),side="left") )
-
-st.plotly_chart(fig,use_container_width=True)
 
 
-#%%
-fig = go.Figure()
-fig.add_trace(go.Scatter(x=arsiv['Tarih'], y=arsiv['Tahmin'], name='Tahmin', mode='lines'))#+markers
-fig.add_trace(go.Scatter(x=arsiv['Tarih'], y=arsiv['PTF'], name='PTF', marker_color='red', mode='lines'))
-fig.update_layout(title="Geçmiş Dönem PTF-Tahmin Karşılaştırma", height=500, yaxis=dict(title=dict(text="TL/MWh"),side="left") )
-fig.update_xaxes(tickformat='%Y-%m-%d')
-st.plotly_chart(fig,use_container_width=True)
+try:
+    #train ve predict 
+    ptf_saat_in=ptf_saat.loc[(veri["gunler"]<songun)]
+    ptf_saat_out=ptf_saat.loc[(veri["gunler"]==songun)][["Saat_grup1","Saat_grup2","Saat_grup3","Saat_grup4","Saat_grup5"]].reset_index(drop=True)#sadece gruplar - tahmin edilen fba ve fbs ile doldurulacak
+    ptf_saat_out=ptf_saat_out[["Saat_grup1","Saat_grup2","Saat_grup3","Saat_grup4","Saat_grup5"]].reset_index(drop=True).merge((pd.DataFrame((fba_result-fbs_result),columns =['FBA-FBS'])),left_index=True, right_index=True, how='inner')
+    
+    #PTF train data tablosu
+    print("PTF Tahmin Bölümü")
+    x_train=ptf_saat_in[["Saat_grup1","Saat_grup2","Saat_grup3","Saat_grup4","Saat_grup5","FBA-FBS"]]
+    y_train=ptf_saat_in["PTF"]
+    
+    
+    
+    #model
+    regressor_ptf = LinearRegression()
+    regressor_ptf.fit(x_train,y_train)
+    
+    #PTF TAHMİNİ - Tavan Fiyat Uygulaması
+    PTF_result_model1= regressor_ptf.predict(ptf_saat_out)
+    PTF_result_model1=pd.DataFrame((PTF_result_model1),columns =['PTF'])
+    PTF_result_model1['PTF'].loc[PTF_result_model1['PTF']>ptf_tavan]=ptf_tavan
+    
+    PTF_result_model1["PTF"]=round(PTF_result_model1["PTF"],0)
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=PTF_result_model1.index, y=PTF_result_model1['PTF'], name='Tahmin', mode='lines+markers',text=PTF_result_model1['PTF']))
+    for i, row in PTF_result_model1.iterrows():
+        fig.add_annotation(
+            text=f'{row["PTF"]}',  
+            x=i,
+            y=row["PTF"] + 50,   
+            showarrow=False    
+        )
+    
+    fig.update_layout(title=str(songun) + " Ortalama PTF: " + str(round(PTF_result_model1["PTF"].mean(),2)), height=500, yaxis=dict(title=dict(text="TL/ MWh"),side="left") )
+    
+    st.plotly_chart(fig,use_container_width=True)
+    
+    
+    #%%
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=arsiv['Tarih'], y=arsiv['Tahmin'], name='Tahmin', mode='lines'))#+markers
+    fig.add_trace(go.Scatter(x=arsiv['Tarih'], y=arsiv['PTF'], name='PTF', marker_color='red', mode='lines'))
+    fig.update_layout(title="Geçmiş Dönem PTF-Tahmin Karşılaştırma", height=500, yaxis=dict(title=dict(text="TL/MWh"),side="left") )
+    fig.update_xaxes(tickformat='%Y-%m-%d')
+    st.plotly_chart(fig,use_container_width=True)
+
+except:
+    st.write("Veri Güncel Değil")
+    pass
