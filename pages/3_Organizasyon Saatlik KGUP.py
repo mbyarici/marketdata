@@ -28,7 +28,7 @@ hide_st_style = """
             header {visibility: hidden;}
             </style>
             """
-st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="centered")
+st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="wide")
 
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
@@ -38,7 +38,7 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 
 @st.cache_data  # Allow caching DataFrame
 def load_and_preprocess_data():
-    veri=pd.read_csv('main.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+    veri=pd.read_csv('main.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)#C:/marketdata/
     veri['date'] = pd.to_datetime(veri['date'])
     
     data = veri[["date","organizationShortName","toplam","dogalgaz","ruzgar","linyit","ithalKomur","barajli","mcp"]]
@@ -76,38 +76,21 @@ filtered_data = data[(data['Katılımcı'].isin(selected_organizations)) &
 tabledata=filtered_data.copy()
 filtered_data=filtered_data.loc[:, (filtered_data != 0).any(axis=0)]
 
-#%% charts
-
+#%%chart
 if not filtered_data.empty:
     for fuel_type in filtered_data.columns[3:-1]:
-        fig, ax = plt.subplots()
-        
-        # Filter
+        fig = go.Figure()
         fuel_data = filtered_data[['Tarih', 'Katılımcı', fuel_type]]
+        if not fuel_data.empty:
+            for org in selected_organizations:
+                org_data = fuel_data[fuel_data['Katılımcı'] == org]
+    
+                fig.add_trace(go.Scatter(x=org_data['Tarih'], y=org_data[fuel_type], name=fuel_type,mode='lines'))
         
-        # Plot
-        for org in selected_organizations:
-            org_data = fuel_data[fuel_data['Katılımcı'] == org]
-            ax.plot(org_data['Tarih'], org_data[fuel_type], linewidth=2, label=org)
-        
-        # better readability
-        plt.xticks(rotation=45, ha='right')
-        
-        # plot labels
-        ax.set_xlabel('Tarih')
-        ax.set_ylabel('KGÜP')
-        ax.set_title(f'KGÜP {fuel_type}')
-        
-        # legends
-        ax.legend(loc='upper left')
-        
-        # Format
-        ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
-        
-        # Display
-        st.pyplot(fig)
-
+                fig.update_layout(title=fuel_type, height=500, yaxis=dict(title=dict(text="MWh"),side="left") )
+                
+                fig.update_xaxes(tickformat='%Y-%m-%d %H')
+                st.plotly_chart(fig,use_container_width=True)
 
 daily = None
 if not tabledata.empty:

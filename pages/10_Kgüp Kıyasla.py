@@ -25,7 +25,7 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%veri
 
-veri=pd.read_csv('main.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+veri=pd.read_csv('main.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)#C:/marketdata/
 veri['date']=pd.to_datetime(veri['date'])
 
 #%% data

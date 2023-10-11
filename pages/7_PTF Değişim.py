@@ -24,7 +24,7 @@ st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", la
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%% yükle
-result= pd.read_csv('PTF.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)
+result= pd.read_csv('PTF.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)#C:/marketdata/
 result['date']=pd.to_datetime(result['date'])
 
 #%%
