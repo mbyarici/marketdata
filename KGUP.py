@@ -21,7 +21,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
 
-
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
@@ -32,8 +31,6 @@ hide_st_style = """
 st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="wide")
 
 st.markdown(hide_st_style, unsafe_allow_html=True)
-
-
 
 #%%veri
 kgupsum=pd.read_csv('genel.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)#C:/marketdata/
@@ -66,7 +63,7 @@ filtered_data = data[(data['Tarih'].dt.date >= selected_days[0]) &
 tabledata=filtered_data.copy()
 filtered_data=filtered_data.loc[:, (filtered_data != 0).any(axis=0)]
 
-
+#%%chart
 
 for fuel_type in filtered_data.columns[1:]:
     fig = go.Figure()
@@ -80,6 +77,7 @@ for fuel_type in filtered_data.columns[1:]:
         fig.update_xaxes(tickformat='%Y-%m-%d %H')
         st.plotly_chart(fig,use_container_width=True)
 
+#%%table
 daily = tabledata.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","Akarsu":"sum","Diğer":"sum"})
 daily[0:] = daily[0:].astype(int)
 daily = daily.reset_index()
