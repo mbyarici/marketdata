@@ -14,6 +14,7 @@ import openpyxl
 import numpy as np
 import datetime
 import plotly.graph_objects as go
+from datetime import timedelta
 
 hide_st_style = """
             <style>
@@ -47,7 +48,7 @@ minvalue = min(veri['Tarih']).date()
 maxvalue = max(veri['Tarih']).date()
 selected_days = st.slider('Tarih Seçiniz', min_value=minvalue, 
                           max_value=maxvalue, 
-                          value=(minvalue, maxvalue))
+                          value=(maxvalue-timedelta(days=21), maxvalue))
 
 #%% filter
 
@@ -55,9 +56,6 @@ filtered_data = veri[(veri['Tarih'].dt.date >= selected_days[0]) &
                      (veri['Tarih'].dt.date <= selected_days[1])] 
 
 #%%
-
-
-
 charttable = pd.DataFrame()
 if not filtered_data.empty:
 

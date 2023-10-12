@@ -15,6 +15,7 @@ import numpy as np
 import datetime
 import plotly.express as px
 import plotly.graph_objects as go
+from datetime import timedelta
 
 hide_st_style = """
             <style>
@@ -52,7 +53,7 @@ minvalue = min(veri['Tarih']).date()
 maxvalue = max(veri['Tarih']).date()
 selected_days = st.slider('Tarih Seçiniz', min_value=minvalue, 
                           max_value=maxvalue, 
-                          value=(minvalue, maxvalue))
+                          value=(maxvalue-timedelta(days=21), maxvalue))
 
 #%% filter
 
