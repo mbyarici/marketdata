@@ -51,43 +51,51 @@ selected_days = st.slider('Tarih Seçiniz', min_value=min(data['Tarih']).date(),
                           value=(min(data['Tarih']).date(), max(data['Tarih']).date()))
 
 #%% hour select
+#selected_hours = st.slider('Saat Seçiniz', min_value=0, max_value=23, value=(0, 23))
 
-selected_hours = st.slider('Saat Seçiniz', min_value=0, max_value=23, value=(0, 23))
-
-#%% filter
+#%%
 
 filtered_data = data[(data['Tarih'].dt.date >= selected_days[0]) &
-                     (data['Tarih'].dt.date <= selected_days[1]) &
-                     (data['Tarih'].dt.hour >= selected_hours[0]) &
-                     (data['Tarih'].dt.hour <= selected_hours[1])]
-tabledata=filtered_data.copy()
-filtered_data=filtered_data.loc[:, (filtered_data != 0).any(axis=0)]
+                     (data['Tarih'].dt.date <= selected_days[1])]# &(data['Tarih'].dt.hour >= selected_hours[0]) &(data['Tarih'].dt.hour <= selected_hours[1])]
 
-#%%chart
+toplam = st.checkbox('Günlük Toplam')
+#%%
+if toplam:
+    
+    ort=st.checkbox('Saatlik Ortalama')
+    if ort:
+        filtered_data = filtered_data.groupby([data['Tarih'].dt.date]).agg("mean")
+    else:
+        filtered_data = filtered_data.groupby([data['Tarih'].dt.date]).agg("sum")
 
-for fuel_type in filtered_data.columns[1:]:
-    fig = go.Figure()
-    fuel_data = filtered_data[['Tarih',  fuel_type]]
-    if not fuel_data.empty:
+    filtered_data[0:] = filtered_data[0:].astype(int)
+    filtered_data = filtered_data.reset_index()
+    filtered_data=filtered_data.loc[:, (filtered_data != 0).any(axis=0)]
+    for fuel_type in filtered_data.columns[1:]:
+        fig = go.Figure()
+        fuel_data = filtered_data[['Tarih',  fuel_type]]
+        if not fuel_data.empty:
+            fig.add_trace(go.Bar(x=fuel_data["Tarih"], y=fuel_data[fuel_type], name=fuel_type))
+            fig.update_layout(title=fuel_type, height=500, yaxis=dict(title=dict(text="MWh"),side="left") )
+            fig.update_xaxes(tickformat='%Y-%m-%d')
+            st.plotly_chart(fig,use_container_width=True)
+    daily=filtered_data.copy()   
+else:
+    tabledata=filtered_data.copy()
+    filtered_data=filtered_data.loc[:, (filtered_data != 0).any(axis=0)]
+    for fuel_type in filtered_data.columns[1:]:
+        fig = go.Figure()
+        fuel_data = filtered_data[['Tarih',  fuel_type]]
+        if not fuel_data.empty:
+            fig.add_trace(go.Scatter(x=fuel_data['Tarih'], y=fuel_data[fuel_type], name=fuel_type,mode='lines'))
+            fig.update_layout(title=fuel_type, height=500, yaxis=dict(title=dict(text="MWh"),side="left") )
+            fig.update_xaxes(tickformat='%Y-%m-%d %H')
+            st.plotly_chart(fig,use_container_width=True)
+    daily = tabledata.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","Akarsu":"sum","Diğer":"sum"})
+    daily = daily.reset_index()
 
-        fig.add_trace(go.Scatter(x=fuel_data['Tarih'], y=fuel_data[fuel_type], name=fuel_type,mode='lines'))
-
-        fig.update_layout(title=fuel_type, height=500, yaxis=dict(title=dict(text="MWh"),side="left") )
-        
-        fig.update_xaxes(tickformat='%Y-%m-%d %H')
-        st.plotly_chart(fig,use_container_width=True)
-
-#%%table
-daily = tabledata.groupby(filtered_data['Tarih'].dt.date).agg({"Toplam":"sum","Doğalgaz":"sum","Rüzgar":"sum","Linyit":"sum","İthal Kömür":"sum","Barajlı":"sum","Akarsu":"sum","Diğer":"sum"})
-daily[0:] = daily[0:].astype(int)
-daily = daily.reset_index()
 daily=daily.loc[:, (daily != 0).any(axis=0)]
-
 st.dataframe(daily,height=600,use_container_width=True)
-
-
-
-
 
 
 

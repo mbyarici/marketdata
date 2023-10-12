@@ -34,7 +34,7 @@ def load_and_preprocess_data():
     veri=pd.read_csv('main.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)#C:/marketdata/
     veri['date'] = pd.to_datetime(veri['date'])
     
-    kaynak=pd.DataFrame(pd.read_excel("kaynak.xlsx", 'secim', index_col=None, na_values=['NA']))
+    kaynak=pd.DataFrame(pd.read_excel("kaynak.xlsx", 'secim', index_col=None, na_values=['NA']))#C:/marketdata/
     
     data = veri[["date","organizationShortName","toplam","mcp"]]
     data.columns = ["Tarih","Katılımcı","Toplam KGÜP","PTF"]
