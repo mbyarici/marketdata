@@ -33,7 +33,7 @@ st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", la
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%veri
-kgupsum=pd.read_csv('C:/marketdata/genel.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)#C:/marketdata/
+kgupsum=pd.read_csv('genel.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)#C:/marketdata/
 kgupsum['tarih']=pd.to_datetime(kgupsum['tarih'])
 
 #%% data
