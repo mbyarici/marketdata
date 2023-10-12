@@ -11,6 +11,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
+from datetime import timedelta
 
 hide_st_style = """
             <style>
@@ -38,7 +39,7 @@ data.columns=["Tarih","Katılımcı","Doğalgaz","Rüzgar","Linyit","İthal Köm
 selected_organization = st.selectbox('Organizasyon Seçimi', data['Katılımcı'].unique())
 selected_day1 = st.date_input('Gün 1 Seçimi', key="day1", min_value=min(data['Tarih']).date(),
                              max_value=max(data['Tarih']).date(),
-                             value=min(data['Tarih']).date())
+                             value=max(data['Tarih']).date()-timedelta(days=1))
 selected_day2 = st.date_input('Gün 2 Seçimi', key="day2", min_value=min(data['Tarih']).date(),
                              max_value=max(data['Tarih']).date(),
                              value=max(data['Tarih']).date())

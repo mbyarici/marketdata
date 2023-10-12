@@ -71,6 +71,6 @@ if not filtered_data.empty:
             fig.update_xaxes(tickformat='%Y-%m-%d %H')
     
             st.plotly_chart(fig,use_container_width=True)
-            print(org_data['Katılımcı'][1:2])
-            print(org_data['KUDÜP Değişim'][1:2])
-            print(org_data['Veriş Değişim'][1:2])
+            #print(org_data['Katılımcı'][1:2])
+            #print(org_data['KUDÜP Değişim'][1:2])
+            #print(org_data['Veriş Değişim'][1:2])
