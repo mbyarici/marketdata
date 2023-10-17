@@ -11,6 +11,7 @@ import numpy as np
 import datetime
 import xlsxwriter
 from io import BytesIO,StringIO
+from datetime import timedelta
 
 hide_st_style = """
             <style>
@@ -33,8 +34,8 @@ result['shortdate']=pd.to_datetime(result['date']).dt.strftime("%Y-%m-%d")
 #%%
 min_date = datetime.date(result['date'][0].year,result['date'][0].month,result['date'][0].day)
 max_date = datetime.date(result['date'].iloc[-1].year,result['date'].iloc[-1].month,result['date'].iloc[-1].day)
-date1 = st.date_input('Gün 1',value=min_date,min_value=min_date,max_value=max_date)
-date2 = st.date_input('Gün 2',value=min_date, min_value=min_date,max_value=max_date)
+date1 = st.date_input('Gün 1',value=(max_date-timedelta(days=1)),min_value=min_date,max_value=max_date)
+date2 = st.date_input('Gün 2',value=max_date, min_value=min_date,max_value=max_date)
 
 date1=str(date1)
 date2=str(date2)
