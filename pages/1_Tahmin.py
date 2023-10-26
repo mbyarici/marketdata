@@ -18,6 +18,7 @@ import plotly.graph_objects as go
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
+import requests as req
 
 hide_st_style = """
             <style>
@@ -299,4 +300,14 @@ try:
 
 except:
     st.write("Veri Güncel Değil")
+    pass
+
+
+try:
+    block_url= "https://seffaflik.epias.com.tr/transparency/service/market/amount-of-block"
+    blok_resp = req.get(block_url,params={"startDate":"2023-09-26","endDate":"2023-09-26"})
+    df_blok=pd.DataFrame(blok_resp.json()["body"]["amountOfBlockList"])
+
+except:
+    st.write("şeffaflık veri çekilemiyor")
     pass
