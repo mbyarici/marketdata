@@ -307,6 +307,7 @@ try:
     block_url= "https://seffaflik.epias.com.tr/transparency/service/market/amount-of-block"
     blok_resp = req.get(block_url,params={"startDate":"2023-09-26","endDate":"2023-09-26"})
     df_blok=pd.DataFrame(blok_resp.json()["body"]["amountOfBlockList"])
+    st.dataframe(df_blok,height=600,use_container_width=True)
 
 except:
     st.write("şeffaflık veri çekilemiyor")
