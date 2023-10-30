@@ -302,3 +302,6 @@ except:
     st.write("Veri Güncel Değil")
     pass
 
+
+
+

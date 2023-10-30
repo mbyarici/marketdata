@@ -23,7 +23,44 @@ from sklearn.linear_model import LinearRegression
 import requests as req
 
 
+#%%sayfa düzeni
 
+
+#%%arz talep cash
+@st.cache_data  # Allow caching DataFrame
+def load_and_preprocess_data(date1):
+
+    suplydemand_url= "https://seffaflik.epias.com.tr/transparency/service/market/supply-demand-curve"
+    try:
+        resp1 = req.get(suplydemand_url,params={"period":date1})
+        suplydemand=pd.DataFrame(resp1.json()["body"]["supplyDemandCurves"])
+        suplydemand["date"]=pd.to_datetime(suplydemand["date"].str[0:-3], format='%Y-%m-%dT%H:%M:%S.%f')
+        suplydemand["date"]=suplydemand["date"].dt.tz_localize(None)
+        suplydemand['hour']=suplydemand["date"].apply(lambda x:x.hour)
+        suplydemand["kesisim"]=suplydemand["demand"]+suplydemand["supply"]
+
+    except:
+        st.write("Arz-Talep okunamadı")
+            
+    #%%
+    demand_pv=pd.pivot_table(suplydemand, values='demand', index=['price'], columns=['hour'], aggfunc=np.mean)
+    demand_pv=demand_pv.interpolate(method='index')#fark interpolasyonları bul #deneme2=x.interpolate(method='values')#aynısı
+    
+    suply_pv=pd.pivot_table(suplydemand, values='supply', index=['price'], columns=['hour'], aggfunc=np.mean)
+    suply_pv=suply_pv.interpolate(method='index')#fark interpolasyonları bul #deneme2=x.interpolate(method='values')#aynısı
+    
+    diff_pv=pd.pivot_table(suplydemand, values='kesisim', index=['price'], columns=['hour'], aggfunc=np.mean)
+    diff_pv=diff_pv.interpolate(method='index')#fark interpolasyonları bul #deneme2=x.interpolate(method='values')#aynısı    
+   
+    return demand_pv, suply_pv,diff_pv#diff pv gerek olmayabilir tamamen arz ve talep ve ikisini kesiştirme olabilir
+
+date1 = st.date_input('Baz gün',value=date.today())
+date1=str(date1)
+
+# Cache teki arz talebi değiştir. 
+demand_pv, suply_pv,diff_pv = load_and_preprocess_data(date1)
+
+print("seçilen baz günün arz talebi okundu")
 
 veri=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
 veri['Tarih']=pd.to_datetime(veri['Tarih'])
@@ -32,19 +69,22 @@ veri['shortdate']=pd.to_datetime(veri['Tarih']).dt.strftime("%Y-%m-%d")
 
 
 
-
 #%%
 #FBA ve FBS tahmin bölümü
 
+#%% Gün parametreleri
+
+date2 = st.date_input('Tahmin Edilecek Gün',value=date.today()+ timedelta(days=1))
+#fba fbs güb parametreleri
+start_date = date2 - timedelta(days=7)
+date_range = [start_date + timedelta(days=x) for x in range(8)]
+date2=str(date2)
+
+
 #%% seçili eğitim günleri
 
-# Calculate the date range for the last 7 days
-end_date = date.today()+ timedelta(days=1)
-start_date = end_date - timedelta(days=7)
-date_range = [start_date + timedelta(days=x) for x in range(8)]
-
 # filter
-selected_dates = st.multiselect("Tahmin ve Eğitim Günleri",  sorted(date_range), default=date_range)
+selected_dates = st.multiselect("Eğitim Günleri",  sorted(date_range), default=date_range)
 selected_dates.sort()
 
 #%%
@@ -88,6 +128,8 @@ try:
     regressor = LinearRegression()
     regressor.fit(x_train,y_train)
     fbs_result= regressor.predict(FBS_predict_input)#FBS TAHMİNİ
+    st.dataframe(fbs_result)
+    fbs_result=pd.DataFrame(fbs_result,columns=["Üretim"])
 except:
     st.write("Veri Güncel Değil")
     pass
@@ -125,41 +167,33 @@ try:
     #predict
     fba_train = regressor.predict(x_train)
     fba_result = regressor.predict( fba_veri_in[['Saat_grup1', 'Saat_grup2', 'Saat_grup3', 'Saat_grup4', 'Saat_grup5',"talep"]])#FBA TAHMİNİ
+    st.dataframe(fba_result)
+    fba_result=pd.DataFrame(fba_result,columns=["Tüketim"])
 except:
     st.write("Veri Güncel Değil")
     pass
 
-
-
-
-
-
-
-
-
-
 #%%
-
-#arz talep oku
-
-#%%
-date1 = st.date_input('Baz gün',value=date.today())
-date2 = st.date_input('Tahmin Günü',value=date.today()+ timedelta(days=1))
-
-date1=str(date1)
-date2=str(date2)
 
 base1=veri[veri['shortdate']==date1][["Tarih","shortdate","talep","Yenilenebilir","FBA","FBS","Eşleşen Blok","PTF"]].reset_index(drop=True)
 base2=veri[veri['shortdate']==date2][["Tarih","shortdate","talep","Yenilenebilir","FBA","FBS","Eşleşen Blok","PTF"]].reset_index(drop=True)
 st.dataframe(base1)
 st.dataframe(base2)
 
-
+#%% eklenecek veriler
 
 try:
-    st.dataframe(base2)
+    data=pd.concat([fbs_result,fba_result], axis=1)
+    data["Diğer"]=0
+    edited_df = st.data_editor(data,height=880)
 except:
-    st.write("Seçilen tahmin gününe ait veri bulunmamaktadır!")
+    st.write("Veri Güncel Değil")
+    pass
+
+
+#%%
+"""
+#arz talep oku
 
 #%%
 
@@ -191,13 +225,12 @@ diff_pv=pd.pivot_table(suplydemand, values='kesisim', index=['price'], columns=[
 diff_pv=diff_pv.interpolate(method='index')#fark interpolasyonları bul #deneme2=x.interpolate(method='values')#aynısı
 
 st.dataframe(diff_pv)
+"""
 #%%
 
 
 
-
-
-
+#%%
 
 
 
