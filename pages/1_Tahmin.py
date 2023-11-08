@@ -43,9 +43,11 @@ arsiv['Tarih']=pd.to_datetime(arsiv['Tarih'])
 
 #%%
 daily = veri[['Tarih','rüzgar','talep','PTF']]
+
 daily.insert(1,"solar",(veri["lisanslı"]+veri["lisanssız"]))
 
-daily = daily.groupby(daily['Tarih'].dt.date).mean()
+daily = daily.groupby(daily['Tarih'].dt.date).mean()#numeric_only=True
+
 daily = daily.reset_index()
 
 #%%GÜNLÜK ORTALAMA TAHMİN
@@ -60,10 +62,10 @@ PTF=pd.DataFrame(daily[(daily['Tarih'] <= tahminbaslangic)& (daily['Tarih'] > ta
 
 #%%
 
-trainparametre=14 # Kaç günlük veri eğitimde kullanılacak
+trainparametre=st.number_input("Salı-Cuma için 7, diğer günler için 14 tavsiye edilir : ", value=14)
 one_day = timedelta(days=1)
 
-#%%
+#%% ort tahmin ve grafiği
 try:
     X_train=daily[(daily['Tarih'] <= tahminbaslangic)& (daily['Tarih'] > tahminbaslangic-timedelta(days=trainparametre))][['talep', 'rüzgar']]
     y_train=daily[(daily['Tarih'] <= tahminbaslangic)& (daily['Tarih'] > tahminbaslangic-timedelta(days=trainparametre))]['PTF']
@@ -90,9 +92,16 @@ try:
     fig.update_layout(title="PTF-Tahmin", height=500, yaxis=dict(title=dict(text="TL/ MWh"),side="left") )
     fig.update_xaxes(tickformat='%Y-%m-%d')
     st.plotly_chart(fig,use_container_width=True)
-
+    st.download_button(
+       "Ort. PTF İndir",
+       sonuc.to_csv(sep=";", decimal=",",index=False).encode('utf-8-sig'),
+       "Ortalama PTF.csv",
+       "text/csv",
+       key='download-Ort'
+    )
+    
 except:
-    st.write("Veri Güncel Değil")
+    st.write("Ort. PTF Verisi Güncel Değil")
     pass
 
 
@@ -116,7 +125,6 @@ try:
     
         tahmingecmis += one_day
 
-
 #%%
     
     kiyas=pd.merge(df.reset_index(drop=True),PTF.reset_index(drop=True),left_index=True, right_index=True, how='inner')
@@ -130,9 +138,12 @@ try:
     fig.update_xaxes(tickformat='%Y-%m-%d')
     st.plotly_chart(fig,use_container_width=True)
 
+    st.write("R^2 = ",r2_score(kiyas['PTF'], kiyas['Tahmin']))
+
 except:
-    st.write("Veri Güncel Değil")
+    st.write("Arşiv Verisi Güncel Değil")
     pass
+
 
 #%%
 #SAATLİK TAHMİN BÖLÜMÜ
@@ -152,8 +163,7 @@ selected_dates.sort()
 #Tahmin günü
 fbs_limit=14500
 
-songun = selected_dates[-1]#tahmini yapılacak gün ytp ve ritm okunacak son gün
-#songun = datetime.strptime(songun, "%Y-%m-%d").date()
+songun = selected_dates[-1]#tahmini yapılacak gün listedeki son gün default :yarın
 
 ptf_tavan=2700
 
@@ -288,6 +298,15 @@ try:
     fig.update_layout(title=str(songun) + " Ortalama PTF: " + str(round(PTF_result_model1["PTF"].mean(),2)), height=500, yaxis=dict(title=dict(text="TL/ MWh"),side="left") )
     
     st.plotly_chart(fig,use_container_width=True)
+    st.download_button(
+       "Saatlik PTF İndir",
+       PTF_result_model1.to_csv(sep=";", decimal=",",index=False).encode('utf-8-sig'),
+       "Saatlik PTF.csv",
+       "text/csv",
+       key='download-Saatlik')
+
+
+
     
     
     #%%
@@ -297,6 +316,7 @@ try:
     fig.update_layout(title="Geçmiş Dönem PTF-Tahmin Karşılaştırma", height=500, yaxis=dict(title=dict(text="TL/MWh"),side="left") )
     fig.update_xaxes(tickformat='%Y-%m-%d')
     st.plotly_chart(fig,use_container_width=True)
+    st.write("R^2 = ",r2_score(arsiv['PTF'], arsiv['Tahmin']))
 
 except:
     st.write("Veri Güncel Değil")
