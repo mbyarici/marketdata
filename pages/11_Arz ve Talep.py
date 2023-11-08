@@ -69,7 +69,7 @@ date1=str(date1)
 # Cache teki arz talebi değiştir. 
 demand_pv, suply_pv,suplydemand = load_and_preprocess_data(date1)#,diff_pv
 
-veri=pd.DataFrame(pd.read_excel("C:/marketdata/Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
+veri=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
 veri['Tarih']=pd.to_datetime(veri['Tarih'])
 veri['shortdate']=pd.to_datetime(veri['Tarih']).dt.strftime("%Y-%m-%d")
 azami=2700
