@@ -96,3 +96,11 @@ if not filtered_data.empty:
             
     charttable.set_index(filtered_data['Tarih'], inplace=True)  # Set Date as the index
     st.dataframe(charttable, height=600, use_container_width=True)
+    st.download_button(
+       "İndir",
+       filtered_data.to_csv(sep=";", decimal=",",index=False).encode('utf-8-sig'),
+       "Kudüp.csv",
+       "text/csv",
+       key='download-kudüp'
+    )
+

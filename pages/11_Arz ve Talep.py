@@ -37,7 +37,7 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%arz talep cash
 @st.cache_data  # Allow caching DataFrame
-def load_and_preprocess_data(date1):
+def loading(date1):
 
     suplydemand_url= "https://seffaflik.epias.com.tr/transparency/service/market/supply-demand-curve"
     try:
@@ -67,7 +67,7 @@ date1 = st.date_input('Baz gün',value=date.today())
 date1=str(date1)
 
 # Cache teki arz talebi değiştir. 
-demand_pv, suply_pv,suplydemand = load_and_preprocess_data(date1)#,diff_pv
+demand_pv, suply_pv,suplydemand = loading(date1)#,diff_pv
 
 veri=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
 veri['Tarih']=pd.to_datetime(veri['Tarih'])
@@ -216,25 +216,38 @@ blok_diff=pd.DataFrame(blok_result["Blok"]-base1["Eşleşen Blok"],columns=["Blo
 summary_df=pd.DataFrame(base1["talep"])
 summary_df.columns=["Baz Tüketim"]
 summary_df["Tüketim Tahmini"]=base2["talep"]
-summary_df["Tüketim Değişimi"]=summary_df["Tüketim Tahmini"]-summary_df["Baz Tüketim"]
-#baz ve tahmin günü  res ges değerleri ve farkı
-summary_df["Baz Yenilenebilir"]=base1["Yenilenebilir"]
-summary_df["Yenilenebilir Tahmini"]=base2["Yenilenebilir"]
-summary_df["Yenilenebilir Değişimi"]=summary_df["Yenilenebilir Tahmini"]-summary_df["Baz Yenilenebilir"]
 
 #baz ve tahmin günü alış 
 
 summary_df["Baz Alış"]=base1["FBA"]
 summary_df["Alış Tahmini"]=pd.DataFrame(fba_result["Tüketim"])
+
+
+#farklar
+summary_df["Tüketim Değişimi"]=summary_df["Tüketim Tahmini"]-summary_df["Baz Tüketim"]
 summary_df["Alış Değişimi"]=summary_df["Alış Tahmini"]-summary_df["Baz Alış"]
+
+#baz ve tahmin günü  res ges değerleri ve farkı
+summary_df["Baz Yenilenebilir"]=base1["Yenilenebilir"]
+summary_df["Yenilenebilir Tahmini"]=base2["Yenilenebilir"]
 
 #baz ve tahmin günü satış
 
 summary_df["Baz Satış"]=base1["FBS"]
 summary_df["Satış Tahmini"]=pd.DataFrame(fbs_result["Üretim"])
+
+#farklar
+summary_df["Yenilenebilir Değişimi"]=summary_df["Yenilenebilir Tahmini"]-summary_df["Baz Yenilenebilir"]
 summary_df["Satış Değişimi"]=summary_df["Satış Tahmini"]-summary_df["Baz Satış"]
 
-st.dataframe(summary_df,height=880,use_container_width=True)
+st.dataframe(summary_df.astype(int),height=880,use_container_width=True)
+st.download_button(
+   "İndir",
+   summary_df.astype(int).to_csv(sep=";", decimal=",",index=False).encode('utf-8-sig'),
+   "Alış Satış.csv",
+   "text/csv",
+   key='download-fbafbs')
+
 #%%değişim grafikleri
         
 col1, col2 = st.columns(2)
@@ -372,6 +385,9 @@ for j in range(0,2,2):
 pitifi.columns=["PTF","Eşleşme Miktarı"]
 pitifi["PTF"] = pitifi["PTF"].astype(int)
 pitifi["Eşleşme Miktarı"] = pitifi["Eşleşme Miktarı"].astype(int)
+pitifi.insert(1,"Baz PTF",base1["PTF"].astype(int))
+pitifi.insert(2,"PTF Değişim",pitifi["PTF"]-pitifi["Baz PTF"])
+
 
 #%%
 #col2
