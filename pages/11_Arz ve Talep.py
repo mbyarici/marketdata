@@ -33,7 +33,7 @@ hide_st_style = """
             """
 st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="wide")
 
-st.markdown(hide_st_style, unsafe_allow_html=True)
+#st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%arz talep cash
 @st.cache_data  # Allow caching DataFrame
@@ -441,7 +441,8 @@ if st.button('Grafikler'):
     
     try:    
         fbafbs=pd.concat([df_market[["priceIndependentBid","priceIndependentOffer"]],df_blok[["amountOfSalesTowardsMatchBlock"]],df_ptf["price"]],axis=1)
-        
+        fbafbs["Gerçekleşen Alış Değişim"]=fbafbs['priceIndependentBid']-summary_df["Baz Alış"]
+        fbafbs["Gerçekleşen Satış Değişim"]=fbafbs['priceIndependentOffer']-summary_df["Baz Satış"]
         #PTF Grafiği
         if not fbafbs.empty:
             fig = go.Figure()
@@ -459,7 +460,22 @@ if st.button('Grafikler'):
             fig.add_trace(go.Scatter(y=grf_fba["Alış Tahmin"], name='Alış Tahmin' ,mode='lines',marker_color='red'))
             fig.update_layout( title="Alış Gerçekleşen ve Tahmin", height=500, yaxis=dict(title=dict(text="MWh"),side="left"))#barmode='group',,overlaying="y"
             st.plotly_chart(fig,use_container_width=True)
-            
+
+        #farklar
+        #alis=pd.concat([fbafbs["Gerçekleşen Alış Değişim"],summary_df["Tüketim Değişimi"],summary_df["Alış Değişimi"]],axis=1)
+        #st.dataframe(alis,height=880)  
+        
+        #farklar grafik 
+
+        if not fbafbs.empty:
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(y=fbafbs["Gerçekleşen Alış Değişim"], name='Gerçekleşen Fark' ,mode='lines'))
+            fig.add_trace(go.Scatter(y=summary_df["Tüketim Değişimi"], name='Tüketim Değişimi' ,mode='lines',marker_color='red'))
+            fig.add_trace(go.Scatter(y=summary_df["Alış Değişimi"], name='Alış Değişimi' ,mode='lines',marker_color='black'))            
+            fig.update_layout( title="Alış Farklar", height=500, yaxis=dict(title=dict(text="MWh"),side="left"))#barmode='group',,overlaying="y"
+            st.plotly_chart(fig,use_container_width=True)   
+
+ 
         #yeni satış    
         grf_fbs=pd.DataFrame(base1["FBS"]+edited_df["Üretim Fark"],columns=["Satış Tahmin"])
         #Üretim Grafiği
@@ -469,6 +485,21 @@ if st.button('Grafikler'):
             fig.add_trace(go.Scatter(y=grf_fbs["Satış Tahmin"], name='Satış Tahmin' ,mode='lines',marker_color='red'))
             fig.update_layout( title="Üretim Gerçekleşen ve Tahmin", height=500, yaxis=dict(title=dict(text="MWh"),side="left"))#barmode='group',,overlaying="y"
             st.plotly_chart(fig,use_container_width=True)
+
+        #farklar grafik
+        if not fbafbs.empty:
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(y=fbafbs['Gerçekleşen Satış Değişim'], name='Gerçekleşen Satış Değişim' ,mode='lines'))
+            fig.add_trace(go.Scatter(y=summary_df["Yenilenebilir Değişimi"], name='Yenilenebilir Değişimi' ,mode='lines',marker_color='red'))
+            fig.add_trace(go.Scatter(y=summary_df["Satış Değişimi"], name='Satış Değişimi' ,mode='lines',marker_color='black'))            
+            fig.update_layout( title="Üretim Farklar", height=500, yaxis=dict(title=dict(text="MWh"),side="left"))#barmode='group',,overlaying="y"
+            st.plotly_chart(fig,use_container_width=True) 
+
+
+        #satis=pd.concat([fbafbs['Gerçekleşen Satış Değişim'],summary_df["Yenilenebilir Değişimi"],summary_df["Satış Değişimi"]],axis=1)
+        #st.dataframe(satis,height=880)
+
+
         
         #yeni blok   
         grf_blok=pd.DataFrame(base1["Eşleşen Blok"]+edited_df["Blok Fark"],columns=["Blok Tahmin"])
@@ -479,6 +510,11 @@ if st.button('Grafikler'):
             fig.add_trace(go.Scatter(y=grf_blok["Blok Tahmin"], name='Blok Tahmin' ,mode='lines',marker_color='red'))
             fig.update_layout( title="Blok Gerçekleşen ve Tahmin", height=500, yaxis=dict(title=dict(text="MWh"),side="left"))#barmode='group',,overlaying="y"
             st.plotly_chart(fig,use_container_width=True)
+ 
+            
+
+            
+            
     except:
         st.write("PTF yayınlanmadı.")
         pass   
