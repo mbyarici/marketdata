@@ -33,7 +33,7 @@ hide_st_style = """
             """
 st.set_page_config(page_title="EMBA", page_icon=":chart_with_upwards_trend:", layout="wide")
 
-#st.markdown(hide_st_style, unsafe_allow_html=True)
+st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%arz talep cash
 @st.cache_data  # Allow caching DataFrame
