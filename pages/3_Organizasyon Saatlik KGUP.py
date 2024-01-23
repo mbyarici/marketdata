@@ -101,3 +101,10 @@ if not tabledata.empty:
 if daily is not None:
     st.dataframe(daily,height=600,use_container_width=True)
 
+st.download_button(
+   "Veri İndir",
+   filtered_data.to_csv(sep=";", decimal=",",index=False).encode('utf-8-sig'),
+   "Saatlik KGUP.csv",
+   "text/csv",
+   key='download-KGUP'
+)

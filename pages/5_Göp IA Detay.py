@@ -101,4 +101,10 @@ if not filtered_data.empty:
        key='download-İşlemler'
     )
     
-    
+st.download_button(
+   "Veri İndir",
+   filtered_data.to_csv(sep=";", decimal=",",index=False).encode('utf-8-sig'),
+   "GOP ve IA.csv",
+   "text/csv",
+   key='download-GOPIA'
+)    
