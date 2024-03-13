@@ -33,12 +33,12 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%
 
-veri=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
+veri=pd.DataFrame(pd.read_excel("C:/marketdata/Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
 veri['Tarih']=pd.to_datetime(veri['Tarih'])
 
 #%%
 
-arsiv=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "arsiv",index_col=None, na_values=['NA']))#C:/marketdata/
+arsiv=pd.DataFrame(pd.read_excel("C:/marketdata/Tahmin.xlsx", "arsiv",index_col=None, na_values=['NA']))#C:/marketdata/
 arsiv['Tarih']=pd.to_datetime(arsiv['Tarih'])
 
 #%%
@@ -46,19 +46,21 @@ daily = veri[['Tarih','rüzgar','talep','PTF']]
 
 daily.insert(1,"solar",(veri["lisanslı"]+veri["lisanssız"]))
 
-daily = daily.groupby(daily['Tarih'].dt.date).mean()#numeric_only=True
+daily = daily.groupby(daily['Tarih'].dt.date)[["solar","rüzgar",'talep','PTF']].agg("mean")
 
 daily = daily.reset_index()
 
 #%%GÜNLÜK ORTALAMA TAHMİN
 
 tahminbaslangic=date.today()
-tahminbaslangic=pd.to_datetime(tahminbaslangic, format="%Y.%m.%d")# + timedelta(days=1)
+#tahminbaslangic=pd.to_datetime(tahminbaslangic, format="%Y.%m.%d")# + timedelta(days=1)
 
-tahmingecmis='2023-05-31'
-tahmingecmis=pd.to_datetime(tahmingecmis, format="%Y.%m.%d")
+tahmingecmis='20230531'
+#tahmingecmis=pd.to_datetime(tahmingecmis, format="%Y.%m.%d")
 tahmingecmis = pd.Timestamp(tahmingecmis)
+tahmingecmis=tahmingecmis.date()
 PTF=pd.DataFrame(daily[(daily['Tarih'] <= tahminbaslangic)& (daily['Tarih'] > tahmingecmis)]['PTF'],columns =['PTF'])
+
 
 #%%
 
