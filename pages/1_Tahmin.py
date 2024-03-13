@@ -33,12 +33,12 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%
 
-veri=pd.DataFrame(pd.read_excel("C:/marketdata/Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
+veri=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
 veri['Tarih']=pd.to_datetime(veri['Tarih'])
 
 #%%
 
-arsiv=pd.DataFrame(pd.read_excel("C:/marketdata/Tahmin.xlsx", "arsiv",index_col=None, na_values=['NA']))#C:/marketdata/
+arsiv=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "arsiv",index_col=None, na_values=['NA']))#C:/marketdata/
 arsiv['Tarih']=pd.to_datetime(arsiv['Tarih'])
 
 #%%
