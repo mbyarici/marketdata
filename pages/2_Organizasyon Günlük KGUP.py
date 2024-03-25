@@ -31,10 +31,10 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 
 @st.cache_data  # Allow caching DataFrame
 def load_and_preprocess_data():
-    veri=pd.read_csv('C:/marketdata/main.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)#C:/marketdata/
+    veri=pd.read_csv('main.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False)#C:/marketdata/
     veri['date'] = pd.to_datetime(veri['date'])
     
-    kaynak=pd.DataFrame(pd.read_excel("C:/marketdata/kaynak.xlsx", 'secim', index_col=None, na_values=['NA']))#C:/marketdata/
+    kaynak=pd.DataFrame(pd.read_excel("kaynak.xlsx", 'secim', index_col=None, na_values=['NA']))#C:/marketdata/
     
     data = veri[["date","organizationShortName","toplam","mcp"]]
     data.columns = ["Tarih","Katılımcı","Toplam KGÜP","PTF"]
