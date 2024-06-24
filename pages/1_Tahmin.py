@@ -141,6 +141,12 @@ try:
     st.plotly_chart(fig,use_container_width=True)
 
     st.write("R^2 = ",r2_score(kiyas['PTF'], kiyas['Tahmin']))
+    st.download_button(
+       "Geçmiş Kıyas İndir",
+       kiyas.to_csv(sep=";", decimal=",",index=False).encode('utf-8-sig'),
+       "Kıyas PTF.csv",
+       "text/csv",
+       key='download-arsiv')
 
 except:
     st.write("Arşiv Verisi Güncel Değil")
