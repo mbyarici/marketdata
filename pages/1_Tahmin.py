@@ -145,7 +145,7 @@ try:
     st.download_button(
        "Karşılaştırma İndir",
        kiyas.to_csv(sep=";", decimal=",",index=False).encode('utf-8-sig'),
-       "Kıyas PTF.csv",
+       "Karşılaştırma.csv",
        "text/csv",
        key='download-arsiv')
 
