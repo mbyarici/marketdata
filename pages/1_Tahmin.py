@@ -174,7 +174,7 @@ fbs_limit=14500
 
 songun = selected_dates[-1]#tahmini yapılacak gün listedeki son gün default :yarın
 
-ptf_tavan=2700
+ptf_tavan=3000
 
 fbs_days=selected_dates#,'29.01.2023 00:00','30.01.2023 00:00' #GEÇMİŞ GÜNLER ÇALIŞTIRILIRKEN GÜNCELLENECEK YER
 ptf_days=selected_dates#model 3 ptf bölümü için için günler

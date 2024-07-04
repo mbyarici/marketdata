@@ -72,7 +72,7 @@ demand_pv, suply_pv,suplydemand = loading(date1)#,diff_pv
 veri=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
 veri['Tarih']=pd.to_datetime(veri['Tarih'])
 veri['shortdate']=pd.to_datetime(veri['Tarih']).dt.strftime("%Y-%m-%d")
-azami=2700
+azami=3000
 asgari=0
 
 #%%
@@ -98,7 +98,7 @@ fbs_limit=14500
 
 songun = selected_dates[-1]#tahmini yapılacak gün ytp ve ritm okunacak son gün
 
-ptf_tavan=2700
+ptf_tavan=3000
 
 fbs_days=selected_dates#
 
