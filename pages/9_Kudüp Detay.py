@@ -28,9 +28,14 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%% veri yükle
 
+arsiv = st.checkbox('Geçmiş Veriler')
+
 @st.cache_data  # Allow caching DataFrame
-def load_and_preprocess_data():
-    veri=pd.read_csv('fark.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False) #C:/marketdata/ 
+def load_and_preprocess_data(archive):
+    if archive:
+        veri=pd.read_csv('farkarsiv.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False) #C:/marketdata/ 
+    else:
+        veri=pd.read_csv('fark.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False) #C:/marketdata/ 
     veri['date'] = pd.to_datetime(veri['date'])    
     veri.rename(columns = {'date':'Tarih','organizationShortName':'Katılımcı','toplam':'Toplam','dogalgaz':'Doğalgaz',
                                 'linyit':'Linyit','akarsu':'Akarsu','barajli':'Barajlı','ithalKomur':'İthal Kömür',
@@ -40,7 +45,7 @@ def load_and_preprocess_data():
    
     return veri, katilimci
 
-veri, katilimci = load_and_preprocess_data()
+veri, katilimci = load_and_preprocess_data(arsiv)
 
 #%%
 
@@ -108,14 +113,13 @@ if not filtered_data.empty:
 
 #%%
 
-arsiv = st.checkbox('Geçmiş Veriler')
+
+
+"""
 
 @st.cache_data  # Allow caching DataFrame
-def load_and_preprocess_data(archive):
-    if archive:
-        veri=pd.read_csv('farkarsiv.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False) #C:/marketdata/ 
-    else:
-        veri=pd.read_csv('fark.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False) #C:/marketdata/ 
+def load_and_preprocess_data():
+    veri=pd.read_csv('fark.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False) #C:/marketdata/ 
     veri['date'] = pd.to_datetime(veri['date'])    
     veri.rename(columns = {'date':'Tarih','organizationShortName':'Katılımcı','toplam':'Toplam','dogalgaz':'Doğalgaz',
                                 'linyit':'Linyit','akarsu':'Akarsu','barajli':'Barajlı','ithalKomur':'İthal Kömür',
@@ -126,3 +130,6 @@ def load_and_preprocess_data(archive):
     return veri, katilimci
 
 veri, katilimci = load_and_preprocess_data()
+
+
+"""
