@@ -110,26 +110,3 @@ if not filtered_data.empty:
     )
 
 
-
-#%%
-
-
-
-"""
-
-@st.cache_data  # Allow caching DataFrame
-def load_and_preprocess_data():
-    veri=pd.read_csv('fark.csv',encoding='utf-8-sig',sep=";", decimal=",",index_col=False) #C:/marketdata/ 
-    veri['date'] = pd.to_datetime(veri['date'])    
-    veri.rename(columns = {'date':'Tarih','organizationShortName':'Katılımcı','toplam':'Toplam','dogalgaz':'Doğalgaz',
-                                'linyit':'Linyit','akarsu':'Akarsu','barajli':'Barajlı','ithalKomur':'İthal Kömür',
-                                'ruzgar':'Rüzgar','diger':'Diğer','mcp':'PTF','smp':'SMF'}, inplace = True)
-    
-    katilimci = veri['Katılımcı'].unique()
-   
-    return veri, katilimci
-
-veri, katilimci = load_and_preprocess_data()
-
-
-"""
