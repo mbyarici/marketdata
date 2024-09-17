@@ -1,4 +1,4 @@
-﻿date;time;toplam;dogalgaz;ruzgar;linyit;tasKomur;ithalKomur;fuelOil;jeotermal;barajli;nafta;biokutle;akarsu;diger
+﻿Tarih;time;toplam;dogalgaz;ruzgar;linyit;tasKomur;ithalKomur;fuelOil;jeotermal;barajli;nafta;biokutle;akarsu;diger
 2024-01-01 00:00:00;00:00;26901,4;1834,27;914,83;4860,0;255,0;6695,3;3,5;1154,67;8429,98;0,0;972,58;1617,77;163,5
 2024-01-01 01:00:00;01:00;25186,73;1647,48;1052,13;4750,0;255,0;6473,4;3,5;1156,07;7228,08;0,0;971,02;1486,55;163,5
 2024-01-01 02:00:00;02:00;23654,93;1536,88;1197,99;4628,9;255,0;6079,4;3,5;1157,92;6251,08;0,0;967,38;1413,38;163,5
