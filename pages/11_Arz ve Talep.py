@@ -21,7 +21,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
 import requests as req
-
+import pytz
 
 #%%sayfa düzeni
 hide_st_style = """
@@ -64,7 +64,22 @@ def loading(date1):
     return demand_pv, suply_pv,suplydemand#,diff_pv
 
 date1 = st.date_input('Baz gün',value=date.today())
-date1=str(date1)
+#date1=str(date1)
+
+date1 = datetime.datetime(date1.year, date1.month, date1.day).replace(hour=0, minute=0, second=0)
+local_timezone = pytz.timezone('Europe/Istanbul')
+date1 = date1.astimezone(local_timezone)
+date1=date1.replace(hour=0)
+date1 = date1.strftime("%Y-%m-%dT%H:%M:%S%z")
+date1 = date1[:19] + date1[-5:-2] + ":" + date1[-2:]
+
+
+
+
+
+
+
+
 
 # Cache teki arz talebi değiştir. 
 demand_pv, suply_pv,suplydemand = loading(date1)#,diff_pv
