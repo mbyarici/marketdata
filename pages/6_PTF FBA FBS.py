@@ -12,6 +12,7 @@ import datetime
 import xlsxwriter
 from io import BytesIO,StringIO
 import plotly.graph_objects as go
+from datetime import timedelta
 
 hide_st_style = """
             <style>
@@ -36,7 +37,7 @@ minvalue = min(veri['Tarih']).date()
 maxvalue = max(veri['Tarih']).date()
 selected_days = st.slider('Tarih Seçiniz', min_value=minvalue, 
                           max_value=maxvalue, 
-                          value=(minvalue, maxvalue))
+                          value=(maxvalue-timedelta(days=21), maxvalue))
 
 #%% filter
 filtered_data = veri[(veri['Tarih'].dt.date >= selected_days[0]) &
