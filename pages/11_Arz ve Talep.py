@@ -46,7 +46,7 @@ def loading(date1):
         for hour in range(24):
 
             print(hour)
-            current_datetime = date1.replace(hour=hour)
+            current_datetime = datecopy.replace(hour=hour)
             current_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S%z")
             current_datetime = current_datetime[:19] + current_datetime[-5:-2] + ":" + current_datetime[-2:]
             
@@ -80,19 +80,20 @@ date1 = st.date_input('Baz gün',value=date.today())
 #date1=str(date1)
 
 
+datecopy=date1
 
 
 # Create a datetime object with the selected date and desired time (00:00:00)
-selected_datetime = datetime.datetime(date1.year, date1.month, date1.day, 0, 0, 0)
+selected_datetime = datetime.datetime(datecopy.year, datecopy.month, datecopy.day, 0, 0, 0)
 
 # Get your local time zone (Istanbul)
 local_timezone = pytz.timezone('Europe/Istanbul')
 
 # Convert the datetime object to your local time zone (optional)
-date1 = selected_datetime.astimezone(local_timezone)
-
+datecopy = selected_datetime.astimezone(local_timezone)
+date1=str(date1)
 print(date1)
-
+#%%
 
 """
 date1 = datetime.datetime(date1.year, date1.month, date1.day).replace(hour=0, minute=0, second=0)
@@ -126,17 +127,10 @@ headers = {
 #%%
 
 
-
-
-
-
-
-
-
 # Cache teki arz talebi değiştir. 
-demand_pv, suply_pv,suplydemand = loading(date1)#,diff_pv
+demand_pv, suply_pv,suplydemand = loading(datecopy)#,diff_pv
 
-veri=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
+veri=pd.DataFrame(pd.read_excel("C:/marketdata/Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
 veri['Tarih']=pd.to_datetime(veri['Tarih'])
 veri['shortdate']=pd.to_datetime(veri['Tarih']).dt.strftime("%Y-%m-%d")
 azami=3000
