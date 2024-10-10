@@ -20,6 +20,7 @@ from datetime import timedelta
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
+from datetime import timedelta
 
 hide_st_style = """
             <style>
@@ -59,7 +60,7 @@ selected_organizations = st.multiselect('Organizasyon Seçiniz', katilimci)
 
 selected_days = st.slider('Tarih Seçiniz', min_value=minvalue, 
                           max_value=maxvalue, 
-                          value=(minvalue, maxvalue))
+                          value=(maxvalue-timedelta(days=35), maxvalue))
 
 #%% hour select
 

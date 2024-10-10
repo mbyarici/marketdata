@@ -15,6 +15,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import xlsxwriter
 from io import BytesIO,StringIO
+from datetime import timedelta
 
 hide_st_style = """
             <style>
@@ -59,7 +60,7 @@ selected_category = st.radio("Yakıt Tipi", kaynak)
 
 selected_days = st.slider('Tarih Seçiniz', min_value=minvalue, 
                           max_value=maxvalue, 
-                          value=(minvalue, maxvalue))
+                          value=(maxvalue-timedelta(days=35), maxvalue))
 
 filtered_data = daily[(daily['Tarih'] >= selected_days[0]) &
                      (daily['Tarih'] <= selected_days[1]) & 

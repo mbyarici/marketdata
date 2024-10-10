@@ -49,7 +49,7 @@ data.columns=["Tarih","Toplam","Doğalgaz","Rüzgar","Linyit","İthal Kömür","
 
 selected_days = st.slider('Tarih Seçiniz', min_value=min(data['Tarih']).date(), 
                           max_value=max(data['Tarih']).date(), 
-                          value=(max(data['Tarih']).date()-timedelta(days=21), max(data['Tarih']).date()))
+                          value=(max(data['Tarih']).date()-timedelta(days=35), max(data['Tarih']).date()))
 
 #%% hour select
 #selected_hours = st.slider('Saat Seçiniz', min_value=0, max_value=23, value=(0, 23))

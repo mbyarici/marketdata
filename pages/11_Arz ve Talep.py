@@ -39,18 +39,31 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 @st.cache_data  # Allow caching DataFrame
 def loading(date1):
 
-    suplydemand_url= "https://seffaflik.epias.com.tr/transparency/service/market/supply-demand-curve"
+    suplydemand_url= "https://seffaflik.epias.com.tr/electricity-service/v1/markets/dam/data/supply-demand"
     try:
-        resp1 = req.get(suplydemand_url,params={"period":date1})
-        suplydemand=pd.DataFrame(resp1.json()["body"]["supplyDemandCurves"])
+        suplydemand = pd.DataFrame()
+        
+        for hour in range(24):
+
+            print(hour)
+            current_datetime = date1.replace(hour=hour)
+            current_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S%z")
+            current_datetime = current_datetime[:19] + current_datetime[-5:-2] + ":" + current_datetime[-2:]
+            
+            
+            payload = {"date": current_datetime}
+            resp1 = req.post(suplydemand_url,json=payload, headers=headers, timeout=15)
+            hourdata=pd.DataFrame(resp1.json()["items"])
+            suplydemand = pd.concat([suplydemand, hourdata], ignore_index=True)
+
         suplydemand["date"]=pd.to_datetime(suplydemand["date"].str[0:-3], format='%Y-%m-%dT%H:%M:%S.%f')
         suplydemand["date"]=suplydemand["date"].dt.tz_localize(None)
         suplydemand['hour']=suplydemand["date"].apply(lambda x:x.hour)
         suplydemand["kesisim"]=suplydemand["demand"]+suplydemand["supply"]
 
     except:
-        st.write("Arz-Talep okunamadı")
-            
+        st.write("Arz-Talep okunamadı")        
+                   
     #%%
     demand_pv=pd.pivot_table(suplydemand, values='demand', index=['price'], columns=['hour'], aggfunc=np.mean)
     demand_pv=demand_pv.interpolate(method='index')#fark interpolasyonları bul #deneme2=x.interpolate(method='values')#aynısı
@@ -66,12 +79,51 @@ def loading(date1):
 date1 = st.date_input('Baz gün',value=date.today())
 #date1=str(date1)
 
+
+
+
+# Create a datetime object with the selected date and desired time (00:00:00)
+selected_datetime = datetime.datetime(date1.year, date1.month, date1.day, 0, 0, 0)
+
+# Get your local time zone (Istanbul)
+local_timezone = pytz.timezone('Europe/Istanbul')
+
+# Convert the datetime object to your local time zone (optional)
+date1 = selected_datetime.astimezone(local_timezone)
+
+print(date1)
+
+
+"""
 date1 = datetime.datetime(date1.year, date1.month, date1.day).replace(hour=0, minute=0, second=0)
 local_timezone = pytz.timezone('Europe/Istanbul')
 date1 = date1.astimezone(local_timezone)
 date1=date1.replace(hour=0)
 date1 = date1.strftime("%Y-%m-%dT%H:%M:%S%z")
 date1 = date1[:19] + date1[-5:-2] + ":" + date1[-2:]
+"""
+
+#%%
+auth_url = "https://giris.epias.com.tr/cas/v1/tickets"  # TGT almak için kullanacağınız URL
+auth_payload = "username=mustafayarici@embaenergy.com&password=Seffaf.3406"
+auth_headers = {"Content-Type": "application/x-www-form-urlencoded","Accept": "text/plain"}
+
+# TGT isteğini yap
+try:
+    auth_response = req.post(auth_url, data=auth_payload, headers=auth_headers)
+    auth_response.raise_for_status()  # Eğer istek başarısız olursa hata fırlatır
+    tgt = auth_response.text  # TGT'yi yanıt metninden al
+    print("TGT : başarılı")
+except Exception as e:
+    print("TGT alma hatası:", e)
+    tgt = None  # TGT alınamazsa devam edemeyiz  
+
+headers = {
+        "TGT": tgt,  # Aldığımız TGT burada kullanılıyor
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+#%%
 
 
 

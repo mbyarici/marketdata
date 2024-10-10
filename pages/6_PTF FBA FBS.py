@@ -37,7 +37,7 @@ minvalue = min(veri['Tarih']).date()
 maxvalue = max(veri['Tarih']).date()
 selected_days = st.slider('Tarih Seçiniz', min_value=minvalue, 
                           max_value=maxvalue, 
-                          value=(maxvalue-timedelta(days=21), maxvalue))
+                          value=(maxvalue-timedelta(days=35), maxvalue))
 
 #%% filter
 filtered_data = veri[(veri['Tarih'].dt.date >= selected_days[0]) &
