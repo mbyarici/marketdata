@@ -50,7 +50,6 @@ def loading(date1):
             current_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S%z")
             current_datetime = current_datetime[:19] + current_datetime[-5:-2] + ":" + current_datetime[-2:]
             
-            
             payload = {"date": current_datetime}
             resp1 = req.post(suplydemand_url,json=payload, headers=headers, timeout=15)
             hourdata=pd.DataFrame(resp1.json()["items"])
@@ -66,43 +65,30 @@ def loading(date1):
                    
     #%%
     demand_pv=pd.pivot_table(suplydemand, values='demand', index=['price'], columns=['hour'], aggfunc=np.mean)
-    demand_pv=demand_pv.interpolate(method='index')#fark interpolasyonları bul #deneme2=x.interpolate(method='values')#aynısı
+    demand_pv=demand_pv.interpolate(method='index')#fark interpolasyonları 
     
     suply_pv=pd.pivot_table(suplydemand, values='supply', index=['price'], columns=['hour'], aggfunc=np.mean)
-    suply_pv=suply_pv.interpolate(method='index')#fark interpolasyonları bul #deneme2=x.interpolate(method='values')#aynısı
+    suply_pv=suply_pv.interpolate(method='index')#fark interpolasyonları
     
     #diff_pv=pd.pivot_table(suplydemand, values='kesisim', index=['price'], columns=['hour'], aggfunc=np.mean)
-    #diff_pv=diff_pv.interpolate(method='index')#fark interpolasyonları bul #deneme2=x.interpolate(method='values')#aynısı    
+    #diff_pv=diff_pv.interpolate(method='index')#fark interpolasyonları  
    
     return demand_pv, suply_pv,suplydemand#,diff_pv
 
 date1 = st.date_input('Baz gün',value=date.today())
-#date1=str(date1)
-
 
 datecopy=date1
 
-
-# Create a datetime object with the selected date and desired time (00:00:00)
+#
 selected_datetime = datetime.datetime(datecopy.year, datecopy.month, datecopy.day, 0, 0, 0)
 
 # Get your local time zone (Istanbul)
 local_timezone = pytz.timezone('Europe/Istanbul')
 
-# Convert the datetime object to your local time zone (optional)
+# 
 datecopy = selected_datetime.astimezone(local_timezone)
 date1=str(date1)
 print(date1)
-#%%
-
-"""
-date1 = datetime.datetime(date1.year, date1.month, date1.day).replace(hour=0, minute=0, second=0)
-local_timezone = pytz.timezone('Europe/Istanbul')
-date1 = date1.astimezone(local_timezone)
-date1=date1.replace(hour=0)
-date1 = date1.strftime("%Y-%m-%dT%H:%M:%S%z")
-date1 = date1[:19] + date1[-5:-2] + ":" + date1[-2:]
-"""
 
 #%%
 auth_url = "https://giris.epias.com.tr/cas/v1/tickets"  # TGT almak için kullanacağınız URL
@@ -112,7 +98,7 @@ auth_headers = {"Content-Type": "application/x-www-form-urlencoded","Accept": "t
 # TGT isteğini yap
 try:
     auth_response = req.post(auth_url, data=auth_payload, headers=auth_headers)
-    auth_response.raise_for_status()  # Eğer istek başarısız olursa hata fırlatır
+    auth_response.raise_for_status()  # Eğer istek başarısız olursa hata
     tgt = auth_response.text  # TGT'yi yanıt metninden al
     print("TGT : başarılı")
 except Exception as e:
