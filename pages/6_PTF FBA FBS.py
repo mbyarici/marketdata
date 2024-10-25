@@ -84,3 +84,13 @@ if not filtered_data.empty:
                           yaxis2=dict(title=dict(text="TL/MWh"),side="right",overlaying="y",range=[0, 3000]))
         fig.update_xaxes(tickformat='%Y-%m-%d %H')
         st.plotly_chart(fig,use_container_width=True)
+
+
+st.dataframe(filtered_data,height=600,use_container_width=True)
+st.download_button(
+   "İndir",
+   filtered_data.to_csv(sep=";", decimal=",").encode('utf-8-sig'),
+   "Tablo.csv",
+   "text/csv",
+   key='download-Tablo'
+)
