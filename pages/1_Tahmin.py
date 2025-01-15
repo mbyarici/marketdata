@@ -64,7 +64,7 @@ PTF=pd.DataFrame(daily[(daily['Tarih'] <= tahminbaslangic)& (daily['Tarih'] > ta
 
 #%%
 
-trainparametre=st.number_input("Salı-Cuma için 7, diğer günler için 14 tavsiye edilir : ", value=14)
+trainparametre=st.number_input("Değer Giriniz : ", value=14)
 one_day = timedelta(days=1)
 
 #%% ort tahmin ve grafiği
