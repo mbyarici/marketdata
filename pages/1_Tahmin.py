@@ -33,12 +33,12 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 
 #%%
 
-veri=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
+veri=pd.DataFrame(pd.read_excel("C:/marketdata/Tahmin.xlsx", "Sayfa1",index_col=None, na_values=['NA']))#C:/marketdata/
 veri['Tarih']=pd.to_datetime(veri['Tarih'])
 
 #%%
 
-arsiv=pd.DataFrame(pd.read_excel("Tahmin.xlsx", "arsiv",index_col=None, na_values=['NA']))#C:/marketdata/
+arsiv=pd.DataFrame(pd.read_excel("C:/marketdata/Tahmin.xlsx", "arsiv",index_col=None, na_values=['NA']))#C:/marketdata/
 arsiv['Tarih']=pd.to_datetime(arsiv['Tarih'])
 
 #%%
@@ -222,14 +222,15 @@ print("FBA periyotlar")
 #FBA seçilen günler
 fba_start=songun- timedelta(days=6)
 fba_veri=veri[["Saat","talep","FBA"]].loc[(veri["gunler"]>=fba_start)&(veri["gunler"]<=songun)]
-
+#%%
 #FBA zaman periyotları - dumy
+
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[0,1,2,3,4,5], value="grup1")
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[6,7,8,9,10], value="grup2")
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[11,12,13], value="grup3")
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[14,15,16,17,18,19,20,21], value="grup4")
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[22,23], value="grup5")
-fba_veri=pd.get_dummies(fba_veri)
+fba_veri=pd.get_dummies(fba_veri, columns=["Saat"])
 
 #train ve predict tabloları
 fba_veri_in=fba_veri[['Saat_grup1', 'Saat_grup2', 'Saat_grup3', 'Saat_grup4', 'Saat_grup5',"talep"]].loc[veri["gunler"]==songun]#predict tablo
