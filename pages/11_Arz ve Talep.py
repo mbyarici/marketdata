@@ -197,7 +197,7 @@ fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[6,7,8,9,10], value="grup2"
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[11,12,13], value="grup3")
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[14,15,16,17,18,19,20,21], value="grup4")
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[22,23], value="grup5")
-fba_veri=pd.get_dummies(fba_veri)
+fba_veri=pd.get_dummies(fba_veri, columns=["Saat"])
 
 #train ve predict tabloları
 fba_veri_in=fba_veri[['Saat_grup1', 'Saat_grup2', 'Saat_grup3', 'Saat_grup4', 'Saat_grup5',"talep"]].loc[veri["gunler"]==songun]#predict tablo
