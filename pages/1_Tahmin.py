@@ -227,8 +227,8 @@ fba_veri=veri[["Saat","talep","FBA"]].loc[(veri["gunler"]>=fba_start)&(veri["gun
 
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[0,1,2,3,4,5], value="grup1")
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[6,7,8,9,10], value="grup2")
-fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[11,12,13], value="grup3")
-fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[14,15,16,17,18,19,20,21], value="grup4")
+fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[11,12,13,14,15,16], value="grup3")
+fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[17,18,19,20,21], value="grup4")
 fba_veri["Saat"]=fba_veri["Saat"].replace(to_replace=[22,23], value="grup5")
 fba_veri=pd.get_dummies(fba_veri, columns=["Saat"])
 
@@ -260,11 +260,11 @@ except:
 ptf_saat=veri.loc[veri['gunler'].isin(ptf_days), ["Saat","talep","rüzgar",	"Solar", "Yenilenebilir","FBA","FBS","FBA-FBS","PTF"]]
 
 #zaman aralıkları dumy
-ptf_saat["Saat"].loc[ptf_saat["Saat"]<5]=0
-ptf_saat["Saat"].loc[(ptf_saat["Saat"]>=5) & (ptf_saat["Saat"]<12)]=1
-ptf_saat["Saat"].loc[(ptf_saat["Saat"]>=12) & (ptf_saat["Saat"]<14)]=2
-ptf_saat["Saat"].loc[(ptf_saat["Saat"]>=14) & (ptf_saat["Saat"]<18)]=3
-ptf_saat["Saat"].loc[ptf_saat["Saat"]>17]=4
+ptf_saat["Saat"].loc[ptf_saat["Saat"]<6]=0
+ptf_saat["Saat"].loc[(ptf_saat["Saat"]>=6) & (ptf_saat["Saat"]<12)]=1
+ptf_saat["Saat"].loc[(ptf_saat["Saat"]>=12) & (ptf_saat["Saat"]<17)]=2
+ptf_saat["Saat"].loc[(ptf_saat["Saat"]>=17) & (ptf_saat["Saat"]<22)]=3
+ptf_saat["Saat"].loc[ptf_saat["Saat"]>21]=4
 
 ptf_saat["Saat"]=ptf_saat["Saat"].replace(to_replace=[0,1,2,3,4], value=["grup1","grup2","grup3","grup4","grup5"])
 ptf_saat=pd.get_dummies(ptf_saat)
@@ -331,6 +331,8 @@ try:
 except:
     st.write("Veri Güncel Değil")
     pass
+
+
 
 
 
